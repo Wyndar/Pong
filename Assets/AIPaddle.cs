@@ -7,9 +7,9 @@ public class AIPaddle : MonoBehaviour
 {
     public float paddleSpeed;
     public float AIMoveThreshold;
-    private Ball ball;
+    public Ball ball;
     private Rigidbody2D rb;
-    private Vector3 resetPosition;
+    private Vector2 resetPosition;
     private void OnEnable()
     {
         ball = FindObjectOfType<Ball>();

@@ -12,7 +12,8 @@ public class Paddle : NetworkBehaviour
     private float startTime;
     private float endTime;
     private bool allowMovement;
-    private Vector3 resetPosition;
+    private Vector2 resetPosition;
+    public bool isOnline;
     private void OnEnable()
     {
         GameManager = FindObjectOfType<GameManager>();
@@ -37,7 +38,7 @@ public class Paddle : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner)
+        if (!IsOwner && isOnline)
             return;
         if (allowMovement)
             rb.velocity = (paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? 1f : -1f });

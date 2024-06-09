@@ -21,7 +21,7 @@ public class Ball : MonoBehaviour
         rb.velocity= Vector3.zero;
         transform.position = Vector3.zero;
         damage = 1;
-        speed = 2;
+        speed = 3;
         yield return new WaitForSeconds(2f);
         Launch();
         yield break;

@@ -2,21 +2,54 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private TMP_Text playerHealthText, enemyHealthText;
-    [SerializeField] private GameObject playerPaddle, enemyPaddle, ball;
+    [SerializeField] private TMP_Text playerHealthText, enemyHealthText, gameOverText;
+    [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, localEnemyPrefab, OnlineEnemyPrefab, ballPrefab;
+    [SerializeField] private GameObject gameOverPanel, startScreenPanel, scoreBoard;
+    [SerializeField] private Color winColor, loseColor;
+
+    public GameObject playerPaddle, enemyPaddle, ball;
     private int playerHealth, enemyHealth;
     private Ball ballScript;
     // Start is called before the first frame update
-    void Start()
+    public void StartGame(GameObject enemyPrefab)
     {
+        ball = Instantiate(ballPrefab);
         ballScript = ball.GetComponent<Ball>();
+        if (enemyPrefab == OnlineEnemyPrefab)
+        {
+            playerPaddle.GetComponent<Paddle>().isOnline = true;
+            //more work needs to be done here
+            return;
+        }
+        startScreenPanel.SetActive(false);
+        enemyPaddle = Instantiate(enemyPrefab);
+        playerPaddle = Instantiate(playerPaddlePrefab);
+        
         playerHealth = 5; enemyHealth = 5;
+        scoreBoard.SetActive(true);
         SetScore();
     }
+    public void GameOver()
+    {
+        Destroy(playerPaddle);
+        Destroy(enemyPaddle);
+        Destroy(ball);
+        scoreBoard.SetActive(false);    
+        gameOverPanel.SetActive(true);
+        gameOverPanel.GetComponent<Image>().color = playerHealth > 0 ? winColor : loseColor;
+        string s = playerHealth > 0 ? "You win!" : "You lose.";
+        gameOverText.text = $"{s} {System.Environment.NewLine} {System.Environment.NewLine} Touch the screen to play again.";
+    }
 
+    public void LoadStartScreen()
+    {
+        gameOverPanel.SetActive(false);
+        startScreenPanel.SetActive(true);
+    }
     public void ScoreChanged(bool isPlayer, bool isDamage, int amount)
     {
         if (isDamage)
@@ -40,12 +73,18 @@ public class GameManager : MonoBehaviour
         if (enemyHealth < 0)
             enemyHealth = 0;
         SetScore();
-        if (playerHealth > 0 && enemyHealth > 0)
+        if (playerHealth == 0 || enemyHealth == 0)
         {
-            playerPaddle.GetComponent<Paddle>().ResetPosition();
-            enemyPaddle.GetComponent<AIPaddle>().ResetPosition();
-            StartCoroutine(ball.GetComponent<Ball>().ResetBall());
+            GameOver();
+            return;
         }
+        playerPaddle.GetComponent<Paddle>().ResetPosition();
+        if (enemyPaddle.GetComponent<AIPaddle>() != null)
+            enemyPaddle.GetComponent<AIPaddle>().ResetPosition();
+        else if (enemyPaddle.GetComponent<PaddleSecondary>() != null)
+            enemyPaddle.GetComponent<PaddleSecondary>().ResetPosition();
+        StartCoroutine(ball.GetComponent<Ball>().ResetBall());
+
     }
 
     private void SetScore()
@@ -53,4 +92,5 @@ public class GameManager : MonoBehaviour
         playerHealthText.text = playerHealth.ToString();
         enemyHealthText.text = enemyHealth.ToString();
     }
+    public void ExitGame()=>Application.Quit();
 }
