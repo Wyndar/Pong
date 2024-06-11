@@ -6,24 +6,45 @@ using TMPro;
 using UnityEngine.UI;
 public class AccountManager : MonoBehaviour
 {
-    public GameObject loginScreen, messagePanel, passwordWarning, usernameWarning;
-    public TMP_InputField usernameInput, passwordInput;
-    public TMP_Text messageText;
+    public GameObject loginScreen, signUpInsteadPanel, messagePanel, passwordWarning, usernameWarning;
+    public InputField usernameInput, passwordInput;
+    public TMP_Text messageText, headerText;
     public string playerName, playerID, accessToken, email, password;
-    public Button loginButton, guestButton;
+    public Button loginButton, signUpButton, guestButton;
     private async void Start()
     {
         await UnityServices.InitializeAsync();
         Debug.Log(UnityServices.State);
         SetupEvents();
     }
-    public void RemoveMessage() => messagePanel.SetActive(false);  
+    public void RemoveMessage() => messagePanel.SetActive(false);
+    public void DisableSignUp()
+    {
+        signUpButton.gameObject.SetActive(false);
+        loginButton.gameObject.SetActive(true);
+        headerText.text = "LOGIN";
+        signUpInsteadPanel.SetActive(false);
+    }
     public void RemoveWarning()
     {
         passwordWarning.SetActive(false);
         usernameWarning.SetActive(false);
     }
 
+    public void SignUp()
+    {
+        signUpInsteadPanel.SetActive(false);
+        signUpButton.gameObject.SetActive(true);
+        loginButton.gameObject.SetActive(false);
+        headerText.text = "SIGN UP";
+    }
+    public void ToggleSignUpSignIn()
+    {
+        if(signUpButton.gameObject.activeInHierarchy)
+            DisableSignUp();
+        else
+            SignUp();
+    }
     public async void VoidSignInAnonymouslyAsync()
     {
         await SignInAnonymouslyAsync();
@@ -44,6 +65,23 @@ public class AccountManager : MonoBehaviour
         if(shouldReturn)
             return;
         await SignInWithUsernamePasswordAsync(usernameInput.text, passwordInput.text);
+    }
+    public async void SignUpWithUsernameAndPasswordAsync()
+    {
+        bool shouldReturn = false;
+        if (usernameInput.text.Length == 0)
+        {
+            shouldReturn = true;
+            usernameWarning.SetActive(true);
+        }
+        if (passwordInput.text.Length < 8)
+        {
+            shouldReturn = true;
+            passwordWarning.SetActive(true);
+        }
+        if (shouldReturn)
+            return;
+        await SignUpWithUsernamePasswordAsync(usernameInput.text, passwordInput.text);
     }
     private void SetupEvents()
     {
