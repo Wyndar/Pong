@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
         }
         startScreenPanel.SetActive(false);
         enemyPaddle = Instantiate(enemyPrefab);
-        playerPaddle = Instantiate(playerPaddlePrefab);
+        playerPaddle = FindObjectOfType<Paddle>().gameObject;
         
         playerHealth = 5; enemyHealth = 5;
         scoreBoard.SetActive(true);

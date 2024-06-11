@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 8886903886770680874}
   m_Layer: 5
   m_Name: Paddle Player
-  m_TagString: Untagged
+  m_TagString: Paddle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2374766380
+  GlobalObjectIdHash: 390793517
   InScenePlacedSourceGlobalObjectIdHash: 390793517
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -132,6 +132,7 @@ MonoBehaviour:
   GameManager: {fileID: 0}
   InputManager: {fileID: 0}
   paddleSpeed: 5
+  isOnline: 0
 --- !u!61 &826592155209834032
 BoxCollider2D:
   m_ObjectHideFlags: 0

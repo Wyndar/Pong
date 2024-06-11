@@ -22,6 +22,7 @@ public class Paddle : NetworkBehaviour
         resetPosition = rb.position;
         InputManager.OnStartTouch += TouchStart;
         InputManager.OnEndTouch += TouchEnd;
+        ResetPosition();
     }
     private void OnDisable()
     {

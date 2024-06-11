@@ -15,6 +15,7 @@ public class AIPaddle : MonoBehaviour
         ball = FindObjectOfType<Ball>();
         rb = GetComponent<Rigidbody2D>();
         resetPosition = rb.position;
+        ResetPosition();
     }
 
     private void Update()

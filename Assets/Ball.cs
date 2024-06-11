@@ -8,6 +8,8 @@ public class Ball : MonoBehaviour
     private Rigidbody2D rb;
     public float speed;
     public int damage;
+    public string lastHitObjectTag = "";
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,8 +30,18 @@ public class Ball : MonoBehaviour
     }
     private void Launch()
     {
-        float x = Random.Range(0, 2) == 0 ? -1 : 1,
+        int x = Random.Range(0, 2) == 0 ? -1 : 1,
             y = Random.Range(0, 2) == 0 ? -1 : 1;
-        rb.velocity = new Vector2(speed * x, speed * y);
+        rb.velocity = new(speed * x, speed * y);
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (lastHitObjectTag == "")
+        {
+            lastHitObjectTag = collision.tag;
+            return;
+        }
+        if (collision.CompareTag("Wall") && lastHitObjectTag == ("Wall"))
+            Launch();         
     }
 }
