@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 3037330327058928054}
   - component: {fileID: 8164905854295170749}
   - component: {fileID: 8205858316401355970}
-  - component: {fileID: 549188932981000852}
   - component: {fileID: 4176436061991152184}
+  - component: {fileID: 549188932981000852}
   - component: {fileID: 80543536820695926}
   - component: {fileID: 1275727899746369312}
   - component: {fileID: 8551970084470592475}
@@ -167,21 +167,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 6
---- !u!114 &549188932981000852
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6758144981249557609}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06bad8e1284a2664db1d76b3cca7041c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  paddleSpeed: 5
-  AIMoveThreshold: 0
-  ball: {fileID: 0}
 --- !u!114 &4176436061991152184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,6 +188,30 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &549188932981000852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6758144981249557609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06bad8e1284a2664db1d76b3cca7041c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resetPosition: {x: 0, y: 0}
+  GameManager: {fileID: 0}
+  InputManager: {fileID: 0}
+  paddleSpeed: 5
+  rb: {fileID: 0}
+  startPos: {x: 0, y: 0}
+  endPos: {x: 0, y: 0}
+  startTime: 0
+  endTime: 0
+  allowMovement: 0
+  AIMoveThreshold: 0
+  ball: {fileID: 0}
 --- !u!114 &80543536820695926
 MonoBehaviour:
   m_ObjectHideFlags: 0

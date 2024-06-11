@@ -3,20 +3,13 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    private Rigidbody2D rb;
     public float speed;
     public int damage;
-    public string lastHitObjectTag = "";
-    public int sameTagBounceCount;
+    private Rigidbody2D rb;
+    private string lastHitObjectTag = "";
+    private int sameTagBounceCount;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-        StartCoroutine(ResetBall());
-    }
-
-    // Update is called once per frame
+    private void OnEnable() => rb = GetComponent<Rigidbody2D>();
     public IEnumerator ResetBall()
     {
         rb.velocity= Vector3.zero;
@@ -35,6 +28,8 @@ public class Ball : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (rb.velocity.sqrMagnitude < new Vector2(speed, speed).sqrMagnitude)
+            rb.velocity += new Vector2(0.5f, 0.5f);
         if (lastHitObjectTag == "")
         {
             lastHitObjectTag = collision.tag;
