@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -9,6 +7,7 @@ public class Ball : MonoBehaviour
     public float speed;
     public int damage;
     public string lastHitObjectTag = "";
+    public int sameTagBounceCount;
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +41,8 @@ public class Ball : MonoBehaviour
             return;
         }
         if (collision.CompareTag("Wall") && lastHitObjectTag == ("Wall"))
-            Launch();         
+            sameTagBounceCount++;
+        if (sameTagBounceCount > 5)
+            Launch();
     }
 }
