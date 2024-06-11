@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     {
         GameObject b = Instantiate(ballPrefab);
         ball = b.GetComponent<Ball>();
+        if(enemyPrefab==null)
+            return;
         if (enemyPrefab == OnlineEnemyPrefab)
             gameType = GameType.VSOnline;
         else if(enemyPrefab == localEnemyPrefab)
