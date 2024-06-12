@@ -474,3 +474,6 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
+# Firebase
+/[Aa]ssets/Firebase/

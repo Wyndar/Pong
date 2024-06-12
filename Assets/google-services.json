@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "770906457708",
+    "project_id": "game-ship",
+    "storage_bucket": "game-ship.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770906457708:android:87c5cd34ebed89ce7d7a49",
+        "android_client_info": {
+          "package_name": "com.gameship.gameship"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLHYOkNpOU-Ty1OwOGnQ_jlcoWlxmaWgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770906457708:android:77667be7a1b83c107d7a49",
+        "android_client_info": {
+          "package_name": "com.gameship.gameshipAndroid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLHYOkNpOU-Ty1OwOGnQ_jlcoWlxmaWgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
