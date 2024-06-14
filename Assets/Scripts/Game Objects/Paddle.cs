@@ -23,4 +23,12 @@ public class Paddle : NetworkBehaviour
         rb.velocity = Vector2.zero;
         rb.position = resetPosition;
     }
+    public void DisableScript()
+    {
+        if (!IsOwner && GameManager.gameType == GameType.VSOnline)
+        {
+            enabled = false;
+            return;
+        }
+    }
 }

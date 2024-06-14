@@ -1,7 +1,8 @@
 using System.Collections;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Ball : MonoBehaviour
+public class Ball : NetworkBehaviour
 {
     public float speed;
     public int damage;
@@ -9,6 +10,14 @@ public class Ball : MonoBehaviour
     private string lastHitObjectTag = "";
     private int sameTagBounceCount;
 
+    public override void OnNetworkSpawn()
+    {
+        if (!IsHost)
+        {
+            enabled = false;
+            return;
+        }
+    }
     private void OnEnable() => rb = GetComponent<Rigidbody2D>();
     public IEnumerator ResetBall()
     {

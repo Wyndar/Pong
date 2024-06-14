@@ -22,6 +22,7 @@ public class AccountManager : MonoBehaviour
         Debug.Log(UnityServices.State);
         SetupEvents();
         InitializeFirebase();
+        await SignInAnonymouslyWithUnityAsync();
     }
 
     private void InitializeFirebase()
@@ -70,16 +71,14 @@ public class AccountManager : MonoBehaviour
     }
     public void CreateNewFirebaseAccountWithEmailAndPassword()
     {
-        //do not optimise, the call also triggers warnings and in the future query the db to check if account exists while typing
+        //do not optimise, the call also triggers warnings and in the future, query the db to check if account exists while typing
         bool pcheck = ValidPasswordCheck();
         bool mCheck = ValidEmailCheck();
         bool cCheck = ConfirmPasswordCheck();
 
         if (!pcheck || !mCheck || !cCheck)
-        {
-            Debug.Log("sumtinwong");
             return;
-        }
+
         password = confirmPasswordInput.text;
         email = emailInput.text;
         auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
@@ -98,8 +97,18 @@ public class AccountManager : MonoBehaviour
         Message($"New Account created successfully. {System.Environment.NewLine} Proceed to choose a username.");
     }
 
-    private void SignInExistingFirebaseAccountWithEmailAndPassword(string email, string password)
+    public void SignInExistingFirebaseAccountWithEmailAndPassword()
     {
+        //do not optimise, the call also triggers warnings and in the future, query the db to check if account exists while typing
+        bool pcheck = ValidPasswordCheck();
+        bool mCheck = ValidEmailCheck();
+
+        if (!pcheck || !mCheck )
+            return;
+
+        password = passwordInput.text;
+        email = emailInput.text;
+
         auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
         {
             if (task.IsCanceled)
@@ -112,7 +121,6 @@ public class AccountManager : MonoBehaviour
                 Message("SignInWithEmailAndPasswordAsync encountered an error: " + task.Exception);
                 return;
             }
-
             AuthResult result = task.Result;
             Message($"{result.User.DisplayName} signed in successfully.");
         });
@@ -122,12 +130,12 @@ public class AccountManager : MonoBehaviour
         auth.SignInAnonymouslyAsync().ContinueWith(task => {
             if (task.IsCanceled)
             {
-                Message("SignInAnonymouslyAsync was canceled.");
+                Message("Guest sign in was canceled.");
                 return;
             }
             if (task.IsFaulted)
             {
-                Message("SignInAnonymouslyAsync encountered an error: " + task.Exception);
+                Message("Guest sign in encountered an error: " + task.Exception);
                 return;
             }
         });
