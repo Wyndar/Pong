@@ -39,7 +39,6 @@ public class PlayerPaddle : Paddle
 
     private void TouchStart(Vector2 position, float time, bool isFirstTouch)
     {
-        Debug.Log(Screen.height / 2 + " " + position.y);
         if (position.y > Screen.height / 2 && PongManager.gameType == GameType.VSLocal && this == PongManager.player1Paddle)
             return;
         if (position.y < Screen.height / 2 && PongManager.gameType == GameType.VSLocal && this == PongManager.player2Paddle)

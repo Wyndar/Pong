@@ -1,13 +1,15 @@
-﻿using Firebase.Auth;
+﻿using System;
 using System.Threading.Tasks;
-using TMPro;
-using Unity.Services.Authentication;
-using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
+using TMPro;
+using Firebase.Auth;
+
 public class AccountManager : MonoBehaviour
 {
-    public GameObject chooseLoginMethod, loginScreen, messagePanel, passwordWarning, usernameWarning, emailWarning,confirmPasswordWarning,
+    public GameObject chooseLoginMethod, loginScreen, homeScreen, messagePanel, passwordWarning, usernameWarning, emailWarning,confirmPasswordWarning,
         confirmPasswordObjects, emailObjects, usernameObjects, signUpInsteadPanel;
     public InputField usernameInput, emailInput, passwordInput, confirmPasswordInput;
     public TMP_Text messageText, headerText;
@@ -32,7 +34,7 @@ public class AccountManager : MonoBehaviour
         AuthStateChanged(this, null);
     }
 
-    private void AuthStateChanged(object sender, System.EventArgs eventArgs)
+    private void AuthStateChanged(object sender, EventArgs eventArgs)
     {
         if (auth.CurrentUser != user)
         {
@@ -94,7 +96,9 @@ public class AccountManager : MonoBehaviour
                 return;
             }
         });
-        Message($"New Account created successfully. {System.Environment.NewLine} Proceed to choose a username.");
+        Message("Sign up successful");
+        loginScreen.SetActive(false);
+        homeScreen.SetActive(true);
     }
 
     public void SignInExistingFirebaseAccountWithEmailAndPassword()
@@ -108,22 +112,27 @@ public class AccountManager : MonoBehaviour
 
         password = passwordInput.text;
         email = emailInput.text;
-
+        AuthResult result = new();
         auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task =>
         {
             if (task.IsCanceled)
             {
-                Message("SignInWithEmailAndPasswordAsync was canceled.");
+                Message("Sign in was canceled.");
                 return;
             }
             if (task.IsFaulted)
             {
-                Message("SignInWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+                Message("Sign in encountered an error: " + task.Exception);
                 return;
             }
-            AuthResult result = task.Result;
-            Message($"{result.User.DisplayName} signed in successfully.");
-        });
+            if (task.IsCompletedSuccessfully)
+            {
+                Debug.Log("OK");
+            }
+        }); 
+        Message("Sign in successful");
+        loginScreen.SetActive(false);
+        homeScreen.SetActive(true);
     }
     public void SignInAnonymouslyToFirebase()
     {
@@ -140,13 +149,15 @@ public class AccountManager : MonoBehaviour
             }
         });
         Message("Guest sign in successful");
+        loginScreen.SetActive(false);
+        homeScreen.SetActive(true);
     }
     private async Task SignInAnonymouslyWithUnityAsync()
     {
         try
         {
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
-            Message("Sign in anonymously succeeded!");
+            Debug.Log("Sign in anonymously succeeded!");
             playerID = AuthenticationService.Instance.PlayerId;
         }
         catch (AuthenticationException ex)
