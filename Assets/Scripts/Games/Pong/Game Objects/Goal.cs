@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class Goal : MonoBehaviour
 {
-    [SerializeField] private GameManager GameManager;
+    [SerializeField] private PongManager PongManager;
     [SerializeField] bool isPlayer;
 
     private void Start()
     {
-        GameManager=FindObjectOfType<GameManager>();
+        PongManager=FindObjectOfType<PongManager>();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Ball"))
-            GameManager.ScoreChanged(isPlayer, true, 0);
+            PongManager.ScoreChanged(isPlayer, true, 0);
     }
 }

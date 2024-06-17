@@ -3,8 +3,8 @@ using Unity.Netcode;
 
 public class Paddle : NetworkBehaviour
 {
+    public PongManager PongManager;
     public Vector2 resetPosition;
-    public GameManager GameManager;
     public float paddleSpeed;
     public Rigidbody2D rb;
     public Vector2 startPos;
@@ -15,7 +15,7 @@ public class Paddle : NetworkBehaviour
     
     public void Awake()
     {
-        GameManager = FindObjectOfType<GameManager>();
+        PongManager = FindObjectOfType<PongManager>();
         rb = GetComponent<Rigidbody2D>();
     }
     public void ResetPosition()
@@ -25,10 +25,12 @@ public class Paddle : NetworkBehaviour
     }
     public void DisableScript()
     {
-        if (!IsOwner && GameManager.gameType == GameType.VSOnline)
+        if (!IsOwner && PongManager.gameType == GameType.VSOnline)
         {
             enabled = false;
             return;
         }
     }
+    //bloody americans 
+    public void SetColor(Color color) => GetComponent<SpriteRenderer>().color = color;
 }

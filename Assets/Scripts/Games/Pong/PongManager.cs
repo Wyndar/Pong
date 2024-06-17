@@ -3,13 +3,13 @@ using TMPro;
 using UnityEngine.UI;
 using Unity.Netcode;
 using System;
-using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
-public class GameManager : NetworkBehaviour
+public class PongManager : GameManager
 {
-    [SerializeField] private TMP_Text playerHealthText, enemyHealthText, gameOverText, lobbyHeaderText;
-    [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, localEnemyPrefab, OnlineEnemyPrefab, ballPrefab, lobbyIDPrefab;
-    [SerializeField] private GameObject gameOverPanel, startScreenPanel, lobbyPanel, relaySelectPanel, scoreBoard, lobbyClients;
+    [SerializeField] private TMP_Text playerHealthText, enemyHealthText, gameOverText;
+    [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, ballPrefab;
+    [SerializeField] private GameObject gameOverPanel, startScreenPanel, scoreBoard;
     [SerializeField] private Color winColor, loseColor;
 
     public RectTransform player1Position, player2Position, offscreenPosition;
@@ -18,11 +18,11 @@ public class GameManager : NetworkBehaviour
     private Ball ball;
     public int PlayerNumber = 1;
     public GameType gameType;
+
+    public override void StartGame() => StartOnlineGameRPC();
     public void StartGame(string game)
     {
         gameType = Enum.Parse<GameType>(game);
-        startScreenPanel.SetActive(false);
-        lobbyPanel.SetActive(false);
         ball = Instantiate(ballPrefab).GetComponent<Ball>();
         player1Paddle = Instantiate(playerPaddlePrefab).GetComponent<PlayerPaddle>();
         GameObject e;
@@ -31,21 +31,15 @@ public class GameManager : NetworkBehaviour
         else
             e = Instantiate(playerPaddlePrefab);
         player2Paddle = e.GetComponent<Paddle>();
-        player1Paddle.resetPosition = player1Position.position;
-        player2Paddle.resetPosition = player2Position.position;
-        player1Paddle.paddleSpeed = 5f;
-        player2Paddle.paddleSpeed = 5f;
-        player1Health = 5; player2Health = 5;
-        scoreBoard.SetActive(true);
+        SetPositionSpeedAndUI();
         SetScore();
+        ResetObjects();
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void StartOnlineGameRPC()
+    private void StartOnlineGameRPC()
     {
         gameType = GameType.VSOnline;
-        startScreenPanel.SetActive(false);
-        lobbyPanel.SetActive(false);
         PlayerPaddle[] paddles = FindObjectsOfType<PlayerPaddle>();
         foreach (PlayerPaddle paddle in paddles)
         {
@@ -60,49 +54,32 @@ public class GameManager : NetworkBehaviour
             b.GetComponent<NetworkObject>().Spawn(true);
             ball = b.GetComponent<Ball>();
         }
-        player1Paddle.resetPosition = player1Position.position;
-        player1Paddle.paddleSpeed = 5f;
-        player1Health = 5;
-        player2Paddle.resetPosition = player2Position.position;
-        player2Paddle.paddleSpeed = 5f;
-        player2Health = 5;
-        
-        scoreBoard.SetActive(true);
+        SetPositionSpeedAndUI();
         SetScore();
         ResetObjects();
     }
 
     public void GameOver()
     {
-        Destroy(player1Paddle.gameObject);
-        Destroy(player2Paddle.gameObject);
-        Destroy(ball.gameObject);
-        scoreBoard.SetActive(false);    
+        if (player1Paddle != null)
+            Destroy(player1Paddle.gameObject);
+        if (player2Paddle != null)
+            Destroy(player2Paddle.gameObject);
+        if (ball != null)
+            Destroy(ball.gameObject);
+        scoreBoard.SetActive(false);
         gameOverPanel.SetActive(true);
         gameOverPanel.GetComponent<Image>().color = player1Health > 0 ? winColor : loseColor;
         string s = player1Health > 0 ? "You win!" : "You lose.";
-        gameOverText.text = $"{s} {System.Environment.NewLine} {System.Environment.NewLine} Touch the screen to play again.";
+        gameOverText.text = $"{s} {Environment.NewLine} {Environment.NewLine} Touch the screen to play again.";
     }
-    
+
     public void LoadStartScreen()
     {
         gameOverPanel.SetActive(false);
         startScreenPanel.SetActive(true);
     }
 
-    public void ToggleLobby(bool shouldShow)
-    {
-        lobbyHeaderText.text = IsHost ? "Hosting" : "Joining";
-        lobbyPanel.SetActive(shouldShow);
-    }
-    public void ToggleRelaySelection(bool shouldShow) => relaySelectPanel.SetActive(shouldShow);
-    public void LobbyUpdateOnJoin()
-    {
-        GameObject p = Instantiate(lobbyIDPrefab, lobbyClients.transform);
-        PlayerNumber = lobbyClients.transform.childCount;
-        p.GetComponentInChildren<Toggle>().isOn = false;
-        p.GetComponentInChildren<TMP_Text>().text = PlayerNumber == 1 ? "Player 1 (Host)" : $"Player {PlayerNumber} (Client)";
-    }
     public void ScoreChanged(bool isPlayer, bool isDamage, int amount)
     {
         if (isDamage)
@@ -147,5 +124,21 @@ public class GameManager : NetworkBehaviour
         playerHealthText.text = player1Health.ToString();
         enemyHealthText.text = player2Health.ToString();
     }
-    public void ExitGame() => Application.Quit();
+
+    //paddles should set their own speed, please change later
+    private void SetPositionSpeedAndUI()
+    {
+        startScreenPanel.SetActive(false);
+        player1Paddle.resetPosition = player1Position.position;
+        player2Paddle.resetPosition = player2Position.position;
+        player1Paddle.paddleSpeed = 5f;
+        player2Paddle.paddleSpeed = 5f;
+        player1Health = 5; player2Health = 5;
+        player1Paddle.SetColor(Color.blue);
+        player2Paddle.SetColor(Color.red);
+        player1Paddle.name = "Blue Player";
+        player2Paddle.name = "Red Player";
+        scoreBoard.SetActive(true);
+    }
 }
+
