@@ -4060,8 +4060,8 @@ MonoBehaviour:
   gameOverPanel: {fileID: 2081154769226859109}
   startScreenPanel: {fileID: 4501741007390601355}
   scoreBoard: {fileID: 2098296740171654449}
-  winColor: {r: 0.18115334, g: 0.73227996, b: 0.96981126, a: 0}
-  loseColor: {r: 0.3207547, g: 0.11075114, b: 0.11075114, a: 0}
+  winColor: {r: 0.18115334, g: 0.73227996, b: 0.96981126, a: 1}
+  loseColor: {r: 0.3207547, g: 0.11075114, b: 0.11075114, a: 1}
   player1Position: {fileID: 3344680289688144958}
   player2Position: {fileID: 9183107077522349454}
   offscreenPosition: {fileID: 1544528226}
