@@ -54,6 +54,8 @@ public class PongManager : GameManager
             var instanceNetworkBall = b.GetComponent<NetworkObject>();
             instanceNetworkBall.Spawn(true);
         }
+        else
+            Camera.main.transform.rotation = new (0, 0, 180, 0); 
         ball = FindObjectOfType<Ball>();
         SetPositionSpeedAndUI();
         scoreBoard.SetActive(true);
@@ -74,6 +76,7 @@ public class PongManager : GameManager
         gameOverPanel.GetComponent<Image>().color = player1Health > 0 ? winColor : loseColor;
         string s = player1Health > 0 ? "You win!" : "You lose.";
         gameOverText.text = $"{s} {Environment.NewLine} {Environment.NewLine} Touch the screen to play again.";
+        Camera.main.transform.rotation = new(0, 0, 0, 0);
     }
 
     public void LoadStartScreen()

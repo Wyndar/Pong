@@ -51,7 +51,12 @@ public class PlayerPaddle : Paddle
         if (!hasGameStarted)
             rb.position = PongManager.offscreenPosition.position;
         if (allowMovement)
-            rb.velocity = paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? 1f : -1f };
+        {
+            if (PongManager.gameType == GameType.VSOnline && !IsHost)
+                rb.velocity = paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? -1f : 1f };
+            else
+                rb.velocity = paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? 1f : -1f };
+        }
         else
             rb.velocity = Vector2.zero;
     }
