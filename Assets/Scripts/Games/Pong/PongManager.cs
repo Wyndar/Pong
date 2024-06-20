@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine.UI;
 using Unity.Netcode;
 using System;
-using UnityEngine.SceneManagement;
 
 public class PongManager : GameManager
 {
@@ -32,6 +31,7 @@ public class PongManager : GameManager
             e = Instantiate(playerPaddlePrefab);
         player2Paddle = e.GetComponent<Paddle>();
         SetPositionSpeedAndUI();
+        scoreBoard.SetActive(true);
         SetScore();
         ResetObjects();
     }
@@ -50,11 +50,13 @@ public class PongManager : GameManager
         }
         if (IsHost)
         {
-            GameObject b = Instantiate(ballPrefab);
-            b.GetComponent<NetworkObject>().Spawn(true);
-            ball = b.GetComponent<Ball>();
+            var b = Instantiate(ballPrefab);
+            var instanceNetworkBall = b.GetComponent<NetworkObject>();
+            instanceNetworkBall.Spawn(true);
         }
+        ball = FindObjectOfType<Ball>();
         SetPositionSpeedAndUI();
+        scoreBoard.SetActive(true);
         SetScore();
         ResetObjects();
     }
@@ -82,8 +84,13 @@ public class PongManager : GameManager
 
     public void ScoreChanged(bool isPlayer, bool isDamage, int amount)
     {
-        if (isDamage)
+        if (isDamage && amount == 0)
             amount = ball.damage;
+        if(IsHost&&gameType==GameType.VSOnline)
+        {
+            ScoreChangedRPC(isPlayer, isDamage, amount);
+            return;
+        }    
         if (isPlayer)
         {
             if (isDamage)
@@ -108,7 +115,39 @@ public class PongManager : GameManager
             GameOver();
             return;
         }
+        if (!IsHost && gameType == GameType.VSOnline)
+            return;
         if (isDamage)
+            ResetObjects();
+    }
+    [Rpc(SendTo.ClientsAndHost)]
+    public void ScoreChangedRPC(bool isPlayer, bool isDamage, int amount)
+    {
+        if (isPlayer)
+        {
+            if (isDamage)
+                player1Health -= amount;
+            else
+                player1Health += amount;
+        }
+        else
+        {
+            if (isDamage)
+                player2Health -= amount;
+            else
+                player2Health += amount;
+        }
+        if (player1Health < 0)
+            player1Health = 0;
+        if (player2Health < 0)
+            player2Health = 0;
+        SetScore();
+        if (player1Health == 0 || player2Health == 0)
+        {
+            GameOver();
+            return;
+        }
+        if (IsHost && isDamage)
             ResetObjects();
     }
     private void ResetObjects()
@@ -119,7 +158,8 @@ public class PongManager : GameManager
             return;
         StartCoroutine(ball.ResetBall());
     }
-    private void SetScore()
+
+    public void SetScore()
     {
         playerHealthText.text = player1Health.ToString();
         enemyHealthText.text = player2Health.ToString();
@@ -129,6 +169,8 @@ public class PongManager : GameManager
     private void SetPositionSpeedAndUI()
     {
         startScreenPanel.SetActive(false);
+        player1Paddle.hasGameStarted = true;
+        player2Paddle.hasGameStarted = true;
         player1Paddle.resetPosition = player1Position.position;
         player2Paddle.resetPosition = player2Position.position;
         player1Paddle.paddleSpeed = 5f;
@@ -138,7 +180,6 @@ public class PongManager : GameManager
         player2Paddle.SetColor(Color.red);
         player1Paddle.name = "Blue Player";
         player2Paddle.name = "Red Player";
-        scoreBoard.SetActive(true);
     }
 }
 

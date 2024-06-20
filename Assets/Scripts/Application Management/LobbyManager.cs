@@ -7,21 +7,23 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Relay;
 using Unity.Networking.Transport.Relay;
+using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(GameManager))]
 public class LobbyManager : MonoBehaviour
 {
     [SerializeField] private TMP_Text lobbyHeaderText;
     [SerializeField] private GameObject lobbyIDPrefab;
-    [SerializeField] private GameObject lobbyPanel, relaySelectPanel, lobbyClients;
+    [SerializeField] private GameObject lobbyPanel, relaySelectPanel, lobbyClients, loadingPanel, lobbyStartButton;
     [SerializeField] private TMP_Text joinCodeText;
     [SerializeField] private InputField joinCodeInput;
     [SerializeField] private GameManager GameManager;
-
     private void Awake() => GameManager = GetComponent<GameManager>();
     public void ToggleLobby(bool shouldShow)
     {
         lobbyHeaderText.text = GameManager.IsHost ? "Hosting" : "Joining";
+        lobbyStartButton.SetActive(GameManager.IsHost);
         lobbyPanel.SetActive(shouldShow);
         if (!shouldShow)
             DisconnectRelay();
@@ -36,6 +38,15 @@ public class LobbyManager : MonoBehaviour
         int PlayerNumber = lobbyClients.transform.childCount;
         p.GetComponentInChildren<Toggle>().isOn = false;
         p.GetComponentInChildren<TMP_Text>().text = PlayerNumber == 1 ? "Player 1 (Host)" : $"Player {PlayerNumber} (Client)";
+    }
+    public void LobbyUpdateOnLeave()
+    {
+        List<Transform> l = new ();
+        foreach (Transform transform in lobbyClients.transform)
+            l.Add(transform);
+        foreach (Transform transform in l)
+            Destroy(transform.gameObject);
+        LobbyUpdateOnJoin();
     }
     public async void StartRelay()
     {
@@ -54,19 +65,22 @@ public class LobbyManager : MonoBehaviour
     public void DisconnectRelay()
     {
         NetworkManager.Singleton.Shutdown();
-        GameManager.ReloadScene();
+        GameManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private async Task<string> StartRelayHost(int maxConnections = 2)
     {
         Allocation allocation;
+        loadingPanel.SetActive(true);
         try
         {
             allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections);
+            loadingPanel.SetActive(false);
         }
         catch
         {
             Debug.Log("Error in allocation.");
+            loadingPanel.SetActive(false);
             throw;
         }
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
@@ -77,13 +91,16 @@ public class LobbyManager : MonoBehaviour
     private async Task<bool> StartRelayClient(string joinCode)
     {
         JoinAllocation joinAllocation;
+        loadingPanel.SetActive(true);
         try
         {
             joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
+            loadingPanel.SetActive(false);
         }
         catch
         {
             Debug.Log("Error in allocation.");
+            loadingPanel.SetActive(false);
             throw;
         }
 

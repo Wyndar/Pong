@@ -12,7 +12,8 @@ public class Paddle : NetworkBehaviour
     public float startTime;
     public float endTime;
     public bool allowMovement;
-    
+    public bool hasGameStarted;
+
     public void Awake()
     {
         PongManager = FindObjectOfType<PongManager>();

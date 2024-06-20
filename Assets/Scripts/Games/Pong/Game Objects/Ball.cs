@@ -35,6 +35,7 @@ public class Ball : NetworkBehaviour
             y = Random.Range(0, 2) == 0 ? -1 : 1;
         rb.velocity = new(speed * x, speed * y);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (rb.velocity.sqrMagnitude < new Vector2(speed, speed).sqrMagnitude)

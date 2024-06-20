@@ -339,8 +339,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9de008ea87cba4545a71f2810ca8f267, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PongManager: {fileID: 0}
   resetPosition: {x: 0, y: 0}
-  GameManager: {fileID: 0}
   paddleSpeed: 0
   rb: {fileID: 0}
   startPos: {x: 0, y: 0}
@@ -348,4 +348,5 @@ MonoBehaviour:
   startTime: 0
   endTime: 0
   allowMovement: 0
+  hasGameStarted: 0
   clientID: 0

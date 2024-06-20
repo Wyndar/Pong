@@ -178,7 +178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 342526429
+  GlobalObjectIdHash: 3395631478
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -199,8 +199,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06bad8e1284a2664db1d76b3cca7041c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PongManager: {fileID: 0}
   resetPosition: {x: 0, y: 0}
-  GameManager: {fileID: 0}
   paddleSpeed: 5
   rb: {fileID: 0}
   startPos: {x: 0, y: 0}
@@ -208,7 +208,7 @@ MonoBehaviour:
   startTime: 0
   endTime: 0
   allowMovement: 0
-  AIMoveThreshold: 0
+  AIMoveThreshold: -2.5
   ball: {fileID: 0}
 --- !u!114 &80543536820695926
 MonoBehaviour:

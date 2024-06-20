@@ -6,12 +6,10 @@ public class PlayerPaddle : Paddle
     private InputManager InputManager;
     private bool isTouch1;
     public int clientID;
-
     public override void OnNetworkSpawn()
     {
         PongManager = FindObjectOfType<PongManager>();
         rb = GetComponent<Rigidbody2D>();
-        rb.position = PongManager.offscreenPosition.position;
         if (!IsOwner)
             return;
         SetPlayerPaddleRpc(NetworkManager.Singleton.LocalClientId);
@@ -50,6 +48,8 @@ public class PlayerPaddle : Paddle
 
     private void Update()
     {
+        if (!hasGameStarted)
+            rb.position = PongManager.offscreenPosition.position;
         if (allowMovement)
             rb.velocity = paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? 1f : -1f };
         else

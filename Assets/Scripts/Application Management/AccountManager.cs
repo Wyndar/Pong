@@ -6,6 +6,7 @@ using Unity.Services.Core;
 using Unity.Services.Authentication;
 using TMPro;
 using Firebase.Auth;
+using Unity.VisualScripting;
 
 public class AccountManager : MonoBehaviour
 {
@@ -20,11 +21,17 @@ public class AccountManager : MonoBehaviour
 
     private async void Start()
     {
+        if (UnityServices.State == ServicesInitializationState.Initialized)
+            return;
+        else
+        {
+            homeScreen.SetActive(false);
+            chooseLoginMethod.SetActive(true);
+        }
         await UnityServices.InitializeAsync();
         Debug.Log(UnityServices.State);
         SetupEvents();
-        InitializeFirebase();
-        await SignInAnonymouslyWithUnityAsync();
+        InitializeFirebase(); await SignInAnonymouslyWithUnityAsync();
     }
 
     private void InitializeFirebase()
@@ -56,6 +63,8 @@ public class AccountManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (auth == null)
+            return;
         auth.StateChanged -= AuthStateChanged;
         auth = null;
     }
@@ -149,6 +158,7 @@ public class AccountManager : MonoBehaviour
             }
         });
         Message("Guest sign in successful");
+        chooseLoginMethod.SetActive(false);
         loginScreen.SetActive(false);
         homeScreen.SetActive(true);
     }
@@ -288,6 +298,8 @@ public class AccountManager : MonoBehaviour
     }
     private void Message(string message)
     {
+        if (messagePanel == null)
+            return;
         messagePanel.SetActive(true);
         messageText.text = message;
     }
