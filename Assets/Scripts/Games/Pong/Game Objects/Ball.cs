@@ -38,7 +38,7 @@ public class Ball : NetworkBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (rb.velocity.sqrMagnitude < new Vector2(speed, speed).sqrMagnitude)
+        if (rb.velocity.sqrMagnitude < 2 * (new Vector2(speed, speed).sqrMagnitude))
             rb.velocity += new Vector2(0.5f, 0.5f);
         if (lastHitObjectTag == "")
         {

@@ -1,11 +1,12 @@
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.UIElements;
 
 public class Paddle : NetworkBehaviour
 {
     public PongManager PongManager;
     public Vector2 resetPosition;
-    public float paddleSpeed;
+    public float paddleSpeed { get; private set; }
     public Rigidbody2D rb;
     public Vector2 startPos;
     public Vector2 endPos;
@@ -13,6 +14,7 @@ public class Paddle : NetworkBehaviour
     public float endTime;
     public bool allowMovement;
     public bool hasGameStarted;
+    public PowerBar powerBar;
 
     public void Awake()
     {
@@ -23,7 +25,12 @@ public class Paddle : NetworkBehaviour
     {
         rb.velocity = Vector2.zero;
         rb.position = resetPosition;
+        GetComponent<RectTransform>().localScale = new(1, 0.125f);
+        paddleSpeed = 5;
     }
+
+    public void ScaleSize(float scale) => GetComponent<RectTransform>().localScale = new(scale, 0.125f);
+    public void ChangeSpeed(float speed) => paddleSpeed = speed;
     public void DisableScript()
     {
         if (!IsOwner && PongManager.gameType == GameType.VSOnline)

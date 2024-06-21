@@ -52,23 +52,22 @@ public class PlayerPaddle : Paddle
             rb.position = PongManager.offscreenPosition.position;
         if (allowMovement)
         {
-            if (PongManager.gameType == GameType.VSOnline && !IsHost)
-                rb.velocity = paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? -1f : 1f };
-            else
-                rb.velocity = paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? 1f : -1f };
+            rb.velocity = name == "Blue Player"
+                ? paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? 1f : -1f }
+                : paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? -1f : 1f };
         }
         else
             rb.velocity = Vector2.zero;
     }
     private void TouchEnd(Vector2 touchPosition, float time, bool isFirstTouch)
     {
-        if (startPos.y > Screen.height / 2 && PongManager.gameType == GameType.VSLocal && gameObject == PongManager.player1Paddle)
-            return;
-        if (startPos.y < Screen.height / 2 && PongManager.gameType == GameType.VSLocal && gameObject == PongManager.player2Paddle)
+        if (startPos.y > Screen.height / 2 && PongManager.gameType == GameType.VSLocal && gameObject == PongManager.player1Paddle ||
+            startPos.y < Screen.height / 2 && PongManager.gameType == GameType.VSLocal && gameObject == PongManager.player2Paddle)
             return;
         endPos = touchPosition;
         endTime = time;
         allowMovement = false;
+        powerBar.PowerPercentChange(endTime - startTime, true);
     }
 }
 
