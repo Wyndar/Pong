@@ -10,8 +10,8 @@ using Unity.VisualScripting;
 
 public class AccountManager : MonoBehaviour
 {
-    public GameObject chooseLoginMethod, loginScreen, homeScreen, messagePanel, passwordWarning, usernameWarning, emailWarning,confirmPasswordWarning,
-        confirmPasswordObjects, emailObjects, usernameObjects, signUpInsteadPanel;
+    public GameObject chooseLoginMethod, loginScreen, homeScreen, messagePanel, passwordWarning, usernameWarning, emailWarning,
+        confirmPasswordWarning, confirmPasswordObjects, emailObjects, usernameObjects, signUpInsteadPanel;
     public InputField usernameInput, emailInput, passwordInput, confirmPasswordInput;
     public TMP_Text messageText, headerText;
     public string playerName, playerID, accessToken, email, password;

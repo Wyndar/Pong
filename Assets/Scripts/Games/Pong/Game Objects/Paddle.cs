@@ -29,6 +29,11 @@ public class Paddle : NetworkBehaviour
         paddleSpeed = 5;
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ball"))
+            powerBar.PowerPercentChange(5, true);
+    }
     public void ScaleSize(float scale) => GetComponent<RectTransform>().localScale = new(scale, 0.125f);
     public void ChangeSpeed(float speed) => paddleSpeed = speed;
     public void DisableScript()

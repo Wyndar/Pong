@@ -17,7 +17,7 @@ public class AIPaddle : Paddle
         else
             rb.velocity = Vector2.zero;
         time += Time.deltaTime;
-        if (time >= 2)
+        if (time >= 1)
         {
             powerBar.PowerPercentChange(chargeAmount, true);
             time = 0;

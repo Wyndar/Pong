@@ -67,7 +67,7 @@ public class PlayerPaddle : Paddle
         endPos = touchPosition;
         endTime = time;
         allowMovement = false;
-        powerBar.PowerPercentChange(endTime - startTime, true);
+        powerBar.PowerPercentChange(2 * (endTime - startTime), true);
     }
 }
 

@@ -80,7 +80,7 @@ public class PowerUpObject: MonoBehaviour
                     PongManager.player1Paddle.ScaleSize(0.5f);
                 break;
             case PowerUp.damage:
-                PongManager.ball.damage += 1;
+                PongManager.GameBall.damage += 1;
                 break;
             case PowerUp.stun:
                 Debug.Log("used stun");
@@ -89,11 +89,13 @@ public class PowerUpObject: MonoBehaviour
                 Debug.Log("used split");
                 break;
             case PowerUp.fastBall:
-                PongManager.ball.speed = 6;
+                PongManager.GameBall.speed = 6;
                 break;
         }
         transform.SetParent(null);
-        PongManager.SetPowerUps();
+        PongManager.SetPowerUps(isPlayer1);
         Destroy(gameObject);
     }
+
+    public void ToggleSelection() => PongManager.PowerUpAddOrRemove(this);
 }
