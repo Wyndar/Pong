@@ -16,7 +16,8 @@ public class PongManager : GameManager
     public Paddle player1Paddle = null, player2Paddle = null;
     public GameType gameType;
     private int player1Health, player2Health;
-    public List<string> opponentPowers;
+    private bool hasSetOnlinePowers;
+    public List<string> player1Powers, player2Powers;
     public Ball GameBall { get; private set; }
     public PowerUpManager PowerUpManager;
 
@@ -55,27 +56,42 @@ public class PongManager : GameManager
             GameObject b = Instantiate(ballPrefab);
             NetworkObject instanceNetworkBall = b.GetComponent<NetworkObject>();
             instanceNetworkBall.Spawn(true);
-            PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player1PowerUps, true);
-            List<string> powers = PowerUpManager.SendOwnerStringData(PowerUpManager.player1PowerUps);
-            foreach (string power in powers)
-                SendPowerUpDataRpc(power);
-            PowerUpManager.SetOnlinePlayerPowers(opponentPowers, PowerUpManager.player2PowerUps);
         }
         else
-        {
-            PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player2PowerUps, true);
-            List<string> powers = PowerUpManager.SendOwnerStringData(PowerUpManager.player2PowerUps);
-            foreach (string power in powers)
-                SendPowerUpDataRpc(power);
-            PowerUpManager.SetOnlinePlayerPowers(opponentPowers, PowerUpManager.player1PowerUps);
             Camera.main.transform.rotation = new(0, 0, 180, 0);
-        }
         GameBall = FindObjectOfType<Ball>();
         GameSetup();
     }
 
-    [Rpc(SendTo.NotOwner)]
-    private void SendPowerUpDataRpc(string powers) => opponentPowers.Add(powers);
+    [Rpc(SendTo.NotMe)]
+    private void SendPowerUpDataRpc(string powers)
+    {
+        if (IsHost)
+        {
+            if (player2Powers.Contains(powers)||hasSetOnlinePowers)
+                return;
+            player2Powers.Add(powers);
+            if (player2Powers.Count == 3)
+            {
+                PowerUpManager.SetOnlinePlayerPowers(player2Powers, PowerUpManager.player2PowerUps);
+                PowerUpManager.SetPowerUps(PowerUpManager.player2PowersPanel, PowerUpManager.player2PowerUps);
+                hasSetOnlinePowers = true;
+            }
+        }
+        else
+        {
+            if (player1Powers.Contains(powers)||hasSetOnlinePowers)
+                return;
+            player1Powers.Add(powers);
+            if (player1Powers.Count == 3)
+            {
+                PowerUpManager.SetOnlinePlayerPowers(player1Powers, PowerUpManager.player1PowerUps);
+                PowerUpManager.SetPowerUps(PowerUpManager.player1PowersPanel, PowerUpManager.player1PowerUps);
+                hasSetOnlinePowers = true;
+            }
+        } 
+    }
+
     public void GameOver()
     {
         if (player1Paddle != null)
@@ -208,6 +224,19 @@ public class PongManager : GameManager
         ResetObjects();
         PowerUpManager.ToggleUI(true);
         PowerUpManager.PowerUpSetup();
+        if (IsHost)
+        {
+            PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player1PowerUps, true);
+            PowerUpManager.SetPowerUps(PowerUpManager.player1PowersPanel, PowerUpManager.player1PowerUps);
+        }
+        else
+        {
+            PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player2PowerUps, true);
+            PowerUpManager.SetPowerUps(PowerUpManager.player2PowersPanel, PowerUpManager.player2PowerUps);
+        }
+        List<string> powers = PowerUpManager.SendOwnerStringData(PowerUpManager.ownersCurrentlyActivePowersUps);
+            foreach (string power in powers)
+                SendPowerUpDataRpc(power);
     }
 }
 

@@ -9,7 +9,7 @@ public class PowerUpManager : MonoBehaviour
     public GameObject powerUpPrefab, powerUpSelectionPrefab;
     public GameObject player1PowerBarsPanel, player2PowerBarsPanel, player1PowersPanel, player2PowersPanel, powerUpSelectionScreen,
         selectedPowersPanel, powerDisplayPanel;
-    public List<PowerUp> player1PowerUps, player2PowerUps, ownersPowerUps;
+    public List<PowerUp> player1PowerUps, player2PowerUps, ownersPowerUps, ownersCurrentlyActivePowersUps;
     public PowerBar player1PowerBar, player2PowerBar;
     private bool hasLoadedPowerUps;
 
@@ -74,7 +74,7 @@ public class PowerUpManager : MonoBehaviour
             SetPowerUps(player2PowersPanel, player2PowerUps);
     }
 
-    private void SetPowerUps(GameObject panel, List<PowerUp> powerUps)
+    public void SetPowerUps(GameObject panel, List<PowerUp> powerUps)
     {
         panel.SetActive(true);
         while (panel.transform.childCount < 3)
@@ -90,6 +90,7 @@ public class PowerUpManager : MonoBehaviour
             if (!p.isPlayer1 && PongManager.gameType == GameType.VSCOM)
                 g.GetComponent<Button>().enabled = false;
             p.SetPowerUp(powerUps[x]);
+            ownersCurrentlyActivePowersUps.Add(powerUps[x]);
             powerUps.RemoveAt(x);
         }
     }
@@ -134,7 +135,10 @@ public class PowerUpManager : MonoBehaviour
         player2PowerBar.SetPowerPercent(0);
         PongManager.player1Paddle.powerBar = player1PowerBar;
         PongManager.player2Paddle.powerBar = player2PowerBar;
-        SetPowerUps(player1PowersPanel, player1PowerUps);
-        SetPowerUps(player2PowersPanel, player2PowerUps);
+        if (PongManager.gameType != GameType.VSOnline)
+        {
+            SetPowerUps(player1PowersPanel, player1PowerUps);
+            SetPowerUps(player2PowersPanel, player2PowerUps);
+        }
     }
 }
