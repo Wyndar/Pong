@@ -2251,18 +2251,19 @@ MonoBehaviour:
   PongManager: {fileID: 5601001092505180246}
   powerUpPrefab: {fileID: 3388588704410495052, guid: 605e9c974a879264b958f76263142501, type: 3}
   powerUpSelectionPrefab: {fileID: 7437897010119230769, guid: c803cbe2083c4b64fa74641b9a358caf, type: 3}
-  player1PowerBarsPanel: {fileID: 828721807}
-  player2PowerBarsPanel: {fileID: 368535883}
-  player1PowersPanel: {fileID: 1682852996447952285}
-  player2PowersPanel: {fileID: 716940842}
+  playerPowerBarsPanel: {fileID: 828721807}
+  opponentPowerBarsPanel: {fileID: 368535883}
+  playerPowersPanel: {fileID: 1682852996447952285}
+  opponentPowersPanel: {fileID: 716940842}
   powerUpSelectionScreen: {fileID: 1548999584}
   selectedPowersPanel: {fileID: 1792010555}
   powerDisplayPanel: {fileID: 928963572}
   player1PowerUps: 
   player2PowerUps: 
   ownersPowerUps: 
-  player1PowerBar: {fileID: 828721811}
-  player2PowerBar: {fileID: 368535885}
+  ownersCurrentlyActivePowersUps: 
+  playerPowerBar: {fileID: 828721811}
+  opponentPowerBar: {fileID: 368535885}
 --- !u!1 &1106771663
 GameObject:
   m_ObjectHideFlags: 0
@@ -6928,8 +6929,8 @@ MonoBehaviour:
   loadingScreenPrefab: {fileID: 1969766543903633113, guid: d3f8e69800f196f4283dfda2996f6726, type: 3}
   canvas: {fileID: 1073939877822152607}
   PlayerIDs: 
-  player1HealthText: {fileID: 8915404376704554425}
-  player2HealthText: {fileID: 5496606750856977491}
+  playerHealthText: {fileID: 8915404376704554425}
+  opponentHealthText: {fileID: 5496606750856977491}
   gameOverText: {fileID: 2740235452571924103}
   playerPaddlePrefab: {fileID: 4309536575918499972, guid: eff731c5b58768440b416841cf07c0dd, type: 3}
   AIEnemyPaddlePrefab: {fileID: 6758144981249557609, guid: 85ce042d67942ca49bd53962d83576c8, type: 3}
@@ -6939,12 +6940,16 @@ MonoBehaviour:
   scoreBoard: {fileID: 7617788777884635348}
   winColor: {r: 0.18115334, g: 0.73227996, b: 0.96981126, a: 1}
   loseColor: {r: 0.3207547, g: 0.11075114, b: 0.11075114, a: 1}
+  player1Goal: {fileID: 1966644764}
+  player2Goal: {fileID: 1564116714}
   player1Position: {fileID: 3344680289688144958}
   player2Position: {fileID: 9183107077522349454}
   offscreenPosition: {fileID: 1544528226}
   player1Paddle: {fileID: 0}
   player2Paddle: {fileID: 0}
   gameType: 0
+  player1Powers: []
+  player2Powers: []
   PowerUpManager: {fileID: 1037313025}
 --- !u!114 &5601001092505180247
 MonoBehaviour:

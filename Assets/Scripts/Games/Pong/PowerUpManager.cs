@@ -7,10 +7,10 @@ public class PowerUpManager : MonoBehaviour
 {
     public PongManager PongManager;
     public GameObject powerUpPrefab, powerUpSelectionPrefab;
-    public GameObject player1PowerBarsPanel, player2PowerBarsPanel, player1PowersPanel, player2PowersPanel, powerUpSelectionScreen,
+    public GameObject playerPowerBarsPanel, opponentPowerBarsPanel, playerPowersPanel, opponentPowersPanel, powerUpSelectionScreen,
         selectedPowersPanel, powerDisplayPanel;
     public List<PowerUp> player1PowerUps, player2PowerUps, ownersPowerUps, ownersCurrentlyActivePowersUps;
-    public PowerBar player1PowerBar, player2PowerBar;
+    public PowerBar playerPowerBar, opponentPowerBar;
     private bool hasLoadedPowerUps;
 
     public void SetLocalPlayerPowers(List<PowerUp> powerUps, bool isOwner)
@@ -33,25 +33,25 @@ public class PowerUpManager : MonoBehaviour
         return returnList;
     }
 
-    public void DamageCharge(int amount, bool player1TookDamage)
+    public void DamageCharge(int amount, bool playerTookDamage)
     {
-        if (player1TookDamage)
-        {
-            player1PowerBar.PowerPercentChange(amount * 30, true);
-            player2PowerBar.PowerPercentChange(amount * 10, true);
+        if (playerTookDamage)
+        { 
+            playerPowerBar.PowerPercentChange(amount * 30, true);
+            opponentPowerBar.PowerPercentChange(amount * 10, true);
             return;
         }
-        player2PowerBar.PowerPercentChange(amount * 30, true);
-        player1PowerBar.PowerPercentChange(amount * 10, true);
+        opponentPowerBar.PowerPercentChange(amount * 30, true);
+        playerPowerBar.PowerPercentChange(amount * 10, true);
 
     }
 
     public void ToggleUI(bool shouldShow)
     {
-        player1PowersPanel.SetActive(shouldShow);
-        player2PowersPanel.SetActive(shouldShow);
-        player1PowerBarsPanel.SetActive(shouldShow);
-        player2PowerBarsPanel.SetActive(shouldShow);
+        playerPowersPanel.SetActive(shouldShow);
+        opponentPowersPanel.SetActive(shouldShow);
+        playerPowerBarsPanel.SetActive(shouldShow);
+        opponentPowerBarsPanel.SetActive(shouldShow);
     }
     public void RandomPowerUpAdd(List<PowerUp> powerUps)
     {
@@ -66,12 +66,12 @@ public class PowerUpManager : MonoBehaviour
             powers.RemoveAt(x);
         }
     }
-    public void SetPowerUps(bool isPlayer1)
+    public void SetPowerUps(bool isPlayer)
     {
-        if (isPlayer1)
-            SetPowerUps(player1PowersPanel, player1PowerUps);
+        if (isPlayer)
+            SetPowerUps(playerPowersPanel, player1PowerUps);
         else
-            SetPowerUps(player2PowersPanel, player2PowerUps);
+            SetPowerUps(opponentPowersPanel, player2PowerUps);
     }
 
     public void SetPowerUps(GameObject panel, List<PowerUp> powerUps)
@@ -86,8 +86,8 @@ public class PowerUpManager : MonoBehaviour
             PowerUpObject p = g.GetComponent<PowerUpObject>();
             p.PongManager = PongManager;
             p.PowerUpManager = this;
-            p.isPlayer1 = powerUps == player1PowerUps;
-            if (!p.isPlayer1 && PongManager.gameType == GameType.VSCOM)
+            p.isPlayer = panel == playerPowerBarsPanel;
+            if (!p.isPlayer && PongManager.gameType == GameType.VSCOM)
                 g.GetComponent<Button>().enabled = false;
             p.SetPowerUp(powerUps[x]);
             ownersCurrentlyActivePowersUps.Add(powerUps[x]);
@@ -131,14 +131,14 @@ public class PowerUpManager : MonoBehaviour
 
     public void PowerUpSetup()
     {
-        player1PowerBar.SetPowerPercent(0);
-        player2PowerBar.SetPowerPercent(0);
-        PongManager.player1Paddle.powerBar = player1PowerBar;
-        PongManager.player2Paddle.powerBar = player2PowerBar;
+        playerPowerBar.SetPowerPercent(0);
+        opponentPowerBar.SetPowerPercent(0);
+        PongManager.player1Paddle.powerBar = playerPowerBar;
+        PongManager.player2Paddle.powerBar = opponentPowerBar;
         if (PongManager.gameType != GameType.VSOnline)
         {
-            SetPowerUps(player1PowersPanel, player1PowerUps);
-            SetPowerUps(player2PowersPanel, player2PowerUps);
+            SetPowerUps(playerPowersPanel, player1PowerUps);
+            SetPowerUps(opponentPowersPanel, player2PowerUps);
         }
     }
 }

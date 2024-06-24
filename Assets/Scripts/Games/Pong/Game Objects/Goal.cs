@@ -5,7 +5,7 @@ using UnityEngine;
 public class Goal : MonoBehaviour
 {
     [SerializeField] private PongManager PongManager;
-    [SerializeField] bool isPlayer;
+    [SerializeField] public bool isPlayer1;
 
     private void Start()
     {
@@ -14,6 +14,6 @@ public class Goal : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Ball"))
-            PongManager.ScoreChanged(isPlayer, true, 0);
+            PongManager.ScoreChanged(isPlayer1, true, 0);
     }
 }

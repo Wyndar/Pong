@@ -6,7 +6,7 @@ public class PowerUpObject: MonoBehaviour
 {
     public PowerUpManager PowerUpManager;
     public PongManager PongManager;
-    public bool isPlayer1;
+    public bool isPlayer;
     public PowerUp powerUp;
     public Image powerUpImage;
     public int powerBarCost;
@@ -39,46 +39,45 @@ public class PowerUpObject: MonoBehaviour
     }
     public void ActivatePowerUp()
     {
-        Debug.Log("aiiyo");
-        if (isPlayer1)
+        if (isPlayer)
         {
-            if (PowerUpManager.player1PowerBar.PowerPercent >= powerBarCost)
-                PowerUpManager.player1PowerBar.PowerPercentChange(powerBarCost, false);
+            if (PowerUpManager.playerPowerBar.PowerPercent >= powerBarCost)
+                PowerUpManager.playerPowerBar.PowerPercentChange(powerBarCost, false);
             else
                 return;
         }
         else
         {
-            if (PowerUpManager.player2PowerBar.PowerPercent >= powerBarCost)
-                PowerUpManager.player2PowerBar.PowerPercentChange(powerBarCost, false);
+            if (PowerUpManager.opponentPowerBar.PowerPercent >= powerBarCost)
+                PowerUpManager.opponentPowerBar.PowerPercentChange(powerBarCost, false);
             else
                 return;
         }
         switch (powerUp)
         {
             case PowerUp.slow:
-                if (isPlayer1)
+                if (isPlayer)
                     PongManager.player2Paddle.ChangeSpeed(2.5f);
                 else
                     PongManager.player1Paddle.ChangeSpeed(2.5f);
                 break;
             case PowerUp.speed:
-                if (isPlayer1)
+                if (isPlayer)
                     PongManager.player1Paddle.ChangeSpeed(10);
                 else
                     PongManager.player2Paddle.ChangeSpeed(10);
                 break;
             case PowerUp.heal:
-                PongManager.ScoreChanged(isPlayer1, false, 1);
+                PongManager.ScoreChanged(isPlayer, false, 1);
                 break;
             case PowerUp.grow:
-                if (isPlayer1)
+                if (isPlayer)
                     PongManager.player1Paddle.ScaleSize(2);
                 else
                     PongManager.player2Paddle.ScaleSize(2);
                 break;
             case PowerUp.shrink:
-                if (isPlayer1)
+                if (isPlayer)
                     PongManager.player2Paddle.ScaleSize(0.5f);
                 else
                     PongManager.player1Paddle.ScaleSize(0.5f);
@@ -100,7 +99,7 @@ public class PowerUpObject: MonoBehaviour
                 break;
         }
         transform.SetParent(null, false);
-        PowerUpManager.SetPowerUps(isPlayer1);
+        PowerUpManager.SetPowerUps(isPlayer);
         Destroy(gameObject);
     }
 
