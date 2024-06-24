@@ -8,50 +8,34 @@ using System.Collections.Generic;
 public class PongManager : GameManager
 {
     [SerializeField] private TMP_Text player1HealthText, player2HealthText, gameOverText;
-    [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, ballPrefab, powerUpPrefab, powerUpSelectionPrefab;
-    [SerializeField]
-    private GameObject gameOverPanel, startScreenPanel, scoreBoard, player1PowerBarsPanel, player2PowerBarsPanel,
-        player1PowersPanel, player2PowersPanel, powerUpSelectionScreen, selectedPowersPanel, powerDisplayPanel;
+    [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, ballPrefab;
+    [SerializeField] private GameObject gameOverPanel, startScreenPanel, scoreBoard;
     [SerializeField] private Color winColor, loseColor;
 
-    public List<PowerUp> player1PowerUps, player2PowerUps, ownersPowerUps;
-    public PowerBar player1PowerBar, player2PowerBar;
     public RectTransform player1Position, player2Position, offscreenPosition;
     public Paddle player1Paddle = null, player2Paddle = null;
-    public int playerNumber = 1;
     public GameType gameType;
     private int player1Health, player2Health;
-    private bool hasLoadedPowerUps;
+    public List<string> opponentPowers;
     public Ball GameBall { get; private set; }
+    public PowerUpManager PowerUpManager;
 
     public override void StartGame() => StartOnlineGameRPC();
     public void StartGame(string game)
     {
+        FindObjectOfType<NetworkManager>().enabled = false;
         gameType = Enum.Parse<GameType>(game);
         GameBall = Instantiate(ballPrefab).GetComponent<Ball>();
         player1Paddle = Instantiate(playerPaddlePrefab).GetComponent<PlayerPaddle>();
         GameObject e;
         if (gameType == GameType.VSCOM)
-        {
             e = Instantiate(AIEnemyPaddlePrefab);
-            if (ownersPowerUps.Count == 6)
-                player1PowerUps = new(ownersPowerUps);
-            else
-                RandomPowerUpAdd(player1PowerUps);
-        }
         else
-        {
-            RandomPowerUpAdd(player1PowerUps);
             e = Instantiate(playerPaddlePrefab);
-        }
+        PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player1PowerUps, true);
+        PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player2PowerUps, false);
         player2Paddle = e.GetComponent<Paddle>();
         GameSetup();
-        scoreBoard.SetActive(true);
-        SetScore();
-        RandomPowerUpAdd(player2PowerUps);
-        SetPowerUps(player1PowersPanel, player1PowerUps);
-        SetPowerUps(player2PowersPanel, player2PowerUps);
-        ResetObjects();
     }
 
     [Rpc(SendTo.ClientsAndHost)]
@@ -68,20 +52,30 @@ public class PongManager : GameManager
         }
         if (IsHost)
         {
-            var b = Instantiate(ballPrefab);
-            var instanceNetworkBall = b.GetComponent<NetworkObject>();
+            GameObject b = Instantiate(ballPrefab);
+            NetworkObject instanceNetworkBall = b.GetComponent<NetworkObject>();
             instanceNetworkBall.Spawn(true);
+            PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player1PowerUps, true);
+            List<string> powers = PowerUpManager.SendOwnerStringData(PowerUpManager.player1PowerUps);
+            foreach (string power in powers)
+                SendPowerUpDataRpc(power);
+            PowerUpManager.SetOnlinePlayerPowers(opponentPowers, PowerUpManager.player2PowerUps);
         }
         else
-            Camera.main.transform.rotation = new (0, 0, 180, 0); 
+        {
+            PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player2PowerUps, true);
+            List<string> powers = PowerUpManager.SendOwnerStringData(PowerUpManager.player2PowerUps);
+            foreach (string power in powers)
+                SendPowerUpDataRpc(power);
+            PowerUpManager.SetOnlinePlayerPowers(opponentPowers, PowerUpManager.player1PowerUps);
+            Camera.main.transform.rotation = new(0, 0, 180, 0);
+        }
         GameBall = FindObjectOfType<Ball>();
         GameSetup();
-        scoreBoard.SetActive(true);
-        SetScore();
-        player1PowerBar.SetPowerPercent(0);
-        ResetObjects();
     }
 
+    [Rpc(SendTo.NotOwner)]
+    private void SendPowerUpDataRpc(string powers) => opponentPowers.Add(powers);
     public void GameOver()
     {
         if (player1Paddle != null)
@@ -91,10 +85,6 @@ public class PongManager : GameManager
         if (GameBall != null)
             Destroy(GameBall.gameObject);
         scoreBoard.SetActive(false);
-        player1PowerBarsPanel.SetActive(false);
-        player2PowerBarsPanel.SetActive(false);
-        player1PowersPanel.SetActive(false);
-        player2PowersPanel.SetActive(false);
         gameOverPanel.SetActive(true);
         gameOverPanel.GetComponent<Image>().color = player1Health > 0 ? winColor : loseColor;
         string s = player1Health > 0 ? "Blue wins!" : "Red wins!";
@@ -122,8 +112,7 @@ public class PongManager : GameManager
             if (isDamage)
             {
                 player1Health -= amount;
-                player1PowerBar.PowerPercentChange(amount * 30, true);
-                player2PowerBar.PowerPercentChange(amount * 10, true);
+                PowerUpManager.DamageCharge(amount, isPlayer1);
             }
             else
                 player1Health += amount;
@@ -132,9 +121,8 @@ public class PongManager : GameManager
         {
             if (isDamage)
             {
-                player1PowerBar.PowerPercentChange(amount * 10, true);
-                player2PowerBar.PowerPercentChange(amount * 30, true);
                 player2Health -= amount;
+                PowerUpManager.DamageCharge(amount, isPlayer1);
             }
             else
                 player2Health += amount;
@@ -200,79 +188,7 @@ public class PongManager : GameManager
         player1HealthText.text = player1Health.ToString();
         player2HealthText.text = player2Health.ToString();
     }
-    public void RandomPowerUpAdd(List<PowerUp> powerUps)
-    {
-        List<PowerUp> powers = new();
-        foreach (PowerUp powerUp in Enum.GetValues(typeof(PowerUp)))
-            powers.Add(powerUp);
-        powerUps.Clear();
-        while (powerUps.Count < 6)
-        {
-            int x = UnityEngine.Random.Range(0, powers.Count);
-            powerUps.Add(powers[x]);
-            powerUps.Add(powers[x]);
-            powers.RemoveAt(x);
-        }
-    } 
-
-    public void SetPowerUps(bool isPlayer1)
-    {
-        if (isPlayer1)
-            SetPowerUps(player1PowersPanel, player1PowerUps);
-        else
-            SetPowerUps(player2PowersPanel, player2PowerUps);
-
-    }
-    public void SetPowerUps(GameObject panel, List<PowerUp> powerUps)
-    {
-        panel.SetActive(true);
-        while (panel.transform.childCount < 3)
-        {
-            if (powerUps.Count == 0)
-                break;
-            int x = UnityEngine.Random.Range(0, powerUps.Count);
-            GameObject g = Instantiate(powerUpPrefab, panel.transform);
-            PowerUpObject p = g.GetComponent<PowerUpObject>();
-            p.PongManager = this;
-            p.isPlayer1 = true;
-            p.SetPowerUp(powerUps[x]);
-            powerUps.RemoveAt(x);
-        }
-    }
-
-    public void PowerUpSelectionScreen()
-    {
-        powerUpSelectionScreen.SetActive(true);
-        if (hasLoadedPowerUps)
-            return;
-        foreach (PowerUp powerUp in Enum.GetValues(typeof(PowerUp)))
-        {
-            GameObject p = Instantiate(powerUpSelectionPrefab, powerDisplayPanel.transform);
-            PowerUpObject power = p.GetComponent<PowerUpObject>();
-            power.PongManager = this;
-            power.SetPowerUp(powerUp);
-        }
-        hasLoadedPowerUps = true;
-    }
-    public void PowerUpAddOrRemove(PowerUpObject powerUp)
-    {
-        if(ownersPowerUps.Contains(powerUp.powerUp))
-        {
-            ownersPowerUps.Remove(powerUp.powerUp);
-            powerUp.transform.SetParent(powerDisplayPanel.transform);
-            return;
-        }
-        if (ownersPowerUps.Count == 6)
-            return;
-        ownersPowerUps.Add(powerUp.powerUp);
-        powerUp.transform.SetParent(selectedPowersPanel.transform);
-    }
-
-    //add warning if less than 6
-    public void DisablePowerUpSelectionScreen()
-    {
-        powerUpSelectionScreen.SetActive(false);
-    }
+   
     private void GameSetup()
     {
         startScreenPanel.SetActive(false);
@@ -287,12 +203,11 @@ public class PongManager : GameManager
         player2Paddle.SetColor(Color.red);
         player1Paddle.name = "Blue Player";
         player2Paddle.name = "Red Player";
-        player1PowerBarsPanel.SetActive(true);
-        player1PowerBar.SetPowerPercent(0);
-        player2PowerBarsPanel.SetActive(true);
-        player2PowerBar.SetPowerPercent(0);
-        player1Paddle.powerBar = player1PowerBar;
-        player2Paddle.powerBar = player2PowerBar;
+        scoreBoard.SetActive(true);
+        SetScore();
+        ResetObjects();
+        PowerUpManager.ToggleUI(true);
+        PowerUpManager.PowerUpSetup();
     }
 }
 

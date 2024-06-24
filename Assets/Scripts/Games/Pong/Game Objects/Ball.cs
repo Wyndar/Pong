@@ -31,21 +31,22 @@ public class Ball : NetworkBehaviour
     }
     private void Launch()
     {
+        sameTagBounceCount = 0;
         int x = Random.Range(0, 2) == 0 ? -1 : 1,
             y = Random.Range(0, 2) == 0 ? -1 : 1;
         rb.velocity = new(speed * x, speed * y);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (rb.velocity.sqrMagnitude < 2 * (new Vector2(speed, speed).sqrMagnitude))
             rb.velocity += new Vector2(0.5f, 0.5f);
         if (lastHitObjectTag == "")
         {
-            lastHitObjectTag = collision.tag;
+            lastHitObjectTag = collision.gameObject.tag;
             return;
         }
-        if (collision.CompareTag("Wall") && lastHitObjectTag == ("Wall"))
+        if (collision.gameObject.tag=="Wall" && lastHitObjectTag == ("Wall"))
             sameTagBounceCount++;
         if (sameTagBounceCount > 5)
             Launch();

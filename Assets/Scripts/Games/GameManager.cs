@@ -1,12 +1,11 @@
 using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 using Unity.Netcode;
+using System.Collections.Generic;
 public class GameManager : NetworkBehaviour
 {
     public GameObject loadingScreenPrefab;
     public GameObject canvas;
-
+    public List<ulong> PlayerIDs = new();
     public void LoadScene(int sceneNum)
     {
        SceneHandler sceneHandler = Instantiate(loadingScreenPrefab, canvas.transform).GetComponent<SceneHandler>();

@@ -31,23 +31,22 @@ public class LobbyManager : MonoBehaviour
     public void ToggleRelaySelection(bool shouldShow) => relaySelectPanel.SetActive(shouldShow);
 
     public void StartGame() => GameManager.StartGame();
-
-    public void LobbyUpdateOnJoin()
+    public void LobbyUpdate()
     {
-        GameObject p = Instantiate(lobbyIDPrefab, lobbyClients.transform);
-        int PlayerNumber = lobbyClients.transform.childCount;
-        p.GetComponentInChildren<Toggle>().isOn = false;
-        p.GetComponentInChildren<TMP_Text>().text = PlayerNumber == 1 ? "Player 1 (Host)" : $"Player {PlayerNumber} (Client)";
-    }
-    public void LobbyUpdateOnLeave()
-    {
-        List<Transform> l = new ();
+        List<Transform> l = new();
         foreach (Transform transform in lobbyClients.transform)
             l.Add(transform);
         foreach (Transform transform in l)
             Destroy(transform.gameObject);
-        LobbyUpdateOnJoin();
+        foreach (ulong PlayerID in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            GameObject p = Instantiate(lobbyIDPrefab, lobbyClients.transform);
+            p.GetComponentInChildren<Toggle>().isOn = false;
+            string v = PlayerID == 0 ? "Host" : "Client";
+            p.GetComponentInChildren<TMP_Text>().text = $"Player {PlayerID} ({v})";
+        }
     }
+
     public async void StartRelay()
     {
         string joinCode = await StartRelayHost();

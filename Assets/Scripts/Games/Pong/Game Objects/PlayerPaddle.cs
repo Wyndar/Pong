@@ -16,7 +16,6 @@ public class PlayerPaddle : Paddle
         InputManager = FindObjectOfType<InputManager>();
         InputManager.OnStartTouch += TouchStart;
         InputManager.OnEndTouch += TouchEnd;
-       
     }
 
     public new void Awake()
@@ -37,9 +36,10 @@ public class PlayerPaddle : Paddle
 
     private void TouchStart(Vector2 position, float time, bool isFirstTouch)
     {
-        if (position.y > Screen.height / 2 && PongManager.gameType == GameType.VSLocal && this == PongManager.player1Paddle)
+        if (!hasGameStarted)
             return;
-        if (position.y < Screen.height / 2 && PongManager.gameType == GameType.VSLocal && this == PongManager.player2Paddle)
+        if (position.y > Screen.height / 2 && PongManager.gameType == GameType.VSLocal && this == PongManager.player1Paddle ||
+        position.y < Screen.height / 2 && PongManager.gameType == GameType.VSLocal && this == PongManager.player2Paddle)
             return;
         startPos = position;
         startTime = time;
@@ -61,13 +61,16 @@ public class PlayerPaddle : Paddle
     }
     private void TouchEnd(Vector2 touchPosition, float time, bool isFirstTouch)
     {
+        if (!hasGameStarted)
+            return;
         if (startPos.y > Screen.height / 2 && PongManager.gameType == GameType.VSLocal && gameObject == PongManager.player1Paddle ||
-            startPos.y < Screen.height / 2 && PongManager.gameType == GameType.VSLocal && gameObject == PongManager.player2Paddle)
+        startPos.y < Screen.height / 2 && PongManager.gameType == GameType.VSLocal && gameObject == PongManager.player2Paddle)
             return;
         endPos = touchPosition;
         endTime = time;
         allowMovement = false;
-        powerBar.PowerPercentChange(2 * (endTime - startTime), true);
+        if (IsOwner || PongManager.gameType != GameType.VSOnline)
+            powerBar.PowerPercentChange(2 * (endTime - startTime), true);
     }
 }
 

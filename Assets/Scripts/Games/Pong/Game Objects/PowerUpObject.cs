@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
 
 public class PowerUpObject: MonoBehaviour
 {
+    public PowerUpManager PowerUpManager;
     public PongManager PongManager;
     public bool isPlayer1;
     public PowerUp powerUp;
@@ -26,6 +28,7 @@ public class PowerUpObject: MonoBehaviour
                 break;
             case PowerUp.shrink:
             case PowerUp.damage:
+            case PowerUp.magnet:
                 powerBarCost = 80;
                 break;
             case PowerUp.stun:
@@ -33,20 +36,21 @@ public class PowerUpObject: MonoBehaviour
                 powerBarCost = 100;
                 break;
         }
-    }    
+    }
     public void ActivatePowerUp()
     {
+        Debug.Log("aiiyo");
         if (isPlayer1)
         {
-            if (PongManager.player1PowerBar.PowerPercent >= powerBarCost)
-                PongManager.player1PowerBar.PowerPercentChange(powerBarCost, false);
+            if (PowerUpManager.player1PowerBar.PowerPercent >= powerBarCost)
+                PowerUpManager.player1PowerBar.PowerPercentChange(powerBarCost, false);
             else
                 return;
         }
         else
         {
-            if (PongManager.player2PowerBar.PowerPercent >= powerBarCost)
-                PongManager.player2PowerBar.PowerPercentChange(powerBarCost, false);
+            if (PowerUpManager.player2PowerBar.PowerPercent >= powerBarCost)
+                PowerUpManager.player2PowerBar.PowerPercentChange(powerBarCost, false);
             else
                 return;
         }
@@ -91,11 +95,14 @@ public class PowerUpObject: MonoBehaviour
             case PowerUp.fastBall:
                 PongManager.GameBall.speed = 6;
                 break;
+            case PowerUp.magnet:
+                Debug.Log("used magnet");
+                break;
         }
-        transform.SetParent(null);
-        PongManager.SetPowerUps(isPlayer1);
+        transform.SetParent(null, false);
+        PowerUpManager.SetPowerUps(isPlayer1);
         Destroy(gameObject);
     }
 
-    public void ToggleSelection() => PongManager.PowerUpAddOrRemove(this);
+    public void ToggleSelection() => PowerUpManager.PowerUpAddOrRemove(this);
 }

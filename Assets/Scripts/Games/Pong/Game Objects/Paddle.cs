@@ -1,6 +1,5 @@
 using UnityEngine;
 using Unity.Netcode;
-using UnityEngine.UIElements;
 
 public class Paddle : NetworkBehaviour
 {
@@ -29,9 +28,9 @@ public class Paddle : NetworkBehaviour
         paddleSpeed = 5;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.CompareTag("Ball"))
+        if (collision.gameObject.tag == "Ball")
             powerBar.PowerPercentChange(5, true);
     }
     public void ScaleSize(float scale) => GetComponent<RectTransform>().localScale = new(scale, 0.125f);
