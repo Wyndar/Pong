@@ -7,6 +7,9 @@ using System.Collections.Generic;
 
 public class PongManager : GameManager
 {
+    private const float damageChargeMultiplier = 10;
+    private const float paddleStartSpeed = 5f;
+    private const int startingHP = 8;
     [SerializeField] private TMP_Text playerHealthText, opponentHealthText, gameOverText;
     [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, ballPrefab;
     [SerializeField] private GameObject gameOverPanel, startScreenPanel, scoreBoard;
@@ -115,21 +118,21 @@ public class PongManager : GameManager
         startScreenPanel.SetActive(true);
     }
 
-    public void ScoreChanged(bool isPlayer, bool isDamage, int amount)
+    public void ScoreChanged(bool isPlayer1, bool isDamage, int amount)
     {
         if (isDamage && amount == 0)
             amount = GameBall.damage;
         if (IsHost && gameType == GameType.VSOnline)
         {
-            ScoreChangedRPC(isPlayer, isDamage, amount);
+            ScoreChangedRPC(isPlayer1, isDamage, amount);
             return;
-        }   
-        if (isPlayer)
+        }
+        if (isPlayer1)
         {
             if (isDamage)
             {
                 playerHealth -= amount;
-                PowerUpManager.DamageCharge(amount, isPlayer);
+                PowerUpManager.DamageCharge(amount, isPlayer1);
             }
             else
                 playerHealth += amount;
@@ -138,58 +141,63 @@ public class PongManager : GameManager
         {
             if (isDamage)
             {
-                playerHealth -= amount;
-                PowerUpManager.DamageCharge(amount, isPlayer);
+                opponentHealth -= amount;
+                PowerUpManager.DamageCharge(amount, isPlayer1);
             }
             else
-                playerHealth += amount;
+                opponentHealth += amount;
         }
+        SetScore();
         if (!isDamage)
             return;
-        if (playerHealth < 0)
-            playerHealth = 0;
-        if (opponentHealth < 0)
-            opponentHealth = 0;
-        SetScore();
+        SetHealth();
         if (playerHealth == 0 || opponentHealth == 0)
-        {
             GameOver();
-            return;
-        }
-        if (!IsHost && gameType == GameType.VSOnline)
-            return;
-        ResetObjects();
+        else
+            ResetObjects();
     }
 
+    //DO NOT TOUCH THIS... GRRRR!!!!!! GO AWAY!
     [Rpc(SendTo.ClientsAndHost)]
     public void ScoreChangedRPC(bool isPlayer1, bool isDamage, int amount)
     {
         if ((isPlayer1 && IsHost) || (!isPlayer1 && !IsHost))
         {
             if (isDamage)
+            {
+                PowerUpManager.DamageCharge(amount, true);
                 playerHealth -= amount;
+            }
             else
                 playerHealth += amount;
         }
-        if((isPlayer1 && !IsHost) || (!isPlayer1 && IsHost)) 
+        if ((isPlayer1 && !IsHost) || (!isPlayer1 && IsHost))
         {
             if (isDamage)
+            {
+                PowerUpManager.DamageCharge(amount, false);
                 opponentHealth -= amount;
+            }
             else
                 opponentHealth += amount;
         }
-        if (playerHealth < 0)
-            playerHealth = 0;
-        if (opponentHealth < 0)
-            opponentHealth = 0;
         SetScore();
-        if (playerHealth == 0 || opponentHealth == 0)
-        {
-            GameOver();
+        if (!isDamage)
             return;
-        }
-        if (IsHost && isDamage)
+        SetHealth();
+        if (playerHealth == 0 || opponentHealth == 0)
+            GameOver();
+        else if (IsHost)
             ResetObjects();
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void PowerBarChargeRpc(float amount, bool add, bool isPlayer1)
+    {
+        if ((isPlayer1 && IsHost) || (!isPlayer1 && !IsHost))
+            PowerUpManager.playerPowerBar.PowerPercentChange(amount, add);
+        if ((!isPlayer1 && IsHost) || (isPlayer1 && !IsHost))
+            PowerUpManager.opponentPowerBar.PowerPercentChange(amount, add);
     }
     private void ResetObjects()
     {
@@ -200,10 +208,17 @@ public class PongManager : GameManager
         StartCoroutine(GameBall.ResetBall());
     }
 
-    public void SetScore()
+    private void SetScore()
     {
         playerHealthText.text = playerHealth.ToString();
         opponentHealthText.text = opponentHealth.ToString();
+    }
+    private void SetHealth()
+    {
+        if (playerHealth < 0)
+            playerHealth = 0;
+        if (opponentHealth < 0)
+            opponentHealth = 0;
     }
    
     private void GameSetup()
@@ -213,9 +228,9 @@ public class PongManager : GameManager
         player2Paddle.hasGameStarted = true;
         player1Paddle.resetPosition = player1Position.position;
         player2Paddle.resetPosition = player2Position.position;
-        player1Paddle.ChangeSpeed(5f);
-        player2Paddle.ChangeSpeed(5f);
-        playerHealth = 8; opponentHealth = 8;
+        player1Paddle.ChangeSpeed(paddleStartSpeed);
+        player2Paddle.ChangeSpeed(paddleStartSpeed);
+        playerHealth = startingHP; opponentHealth = startingHP;
         player1Paddle.SetColor(Color.blue);
         player2Paddle.SetColor(Color.red);
         player1Paddle.name = "Blue Player";

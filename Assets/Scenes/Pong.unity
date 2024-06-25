@@ -2988,7 +2988,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PongManager: {fileID: 0}
-  isPlayer: 0
+  isPlayer1: 0
 --- !u!1 &1612557744
 GameObject:
   m_ObjectHideFlags: 0
@@ -4009,7 +4009,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PongManager: {fileID: 0}
-  isPlayer: 1
+  isPlayer1: 1
 --- !u!1 &1982680630
 GameObject:
   m_ObjectHideFlags: 0

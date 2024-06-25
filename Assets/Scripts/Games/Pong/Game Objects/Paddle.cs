@@ -30,18 +30,20 @@ public class Paddle : NetworkBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ball")
+        if (!collision.gameObject.CompareTag("Ball"))
+            return;
+        if (PongManager.gameType == GameType.VSOnline)
+            PongManager.PowerBarChargeRpc(5, true, IsHost);
+        else
             powerBar.PowerPercentChange(5, true);
     }
     public void ScaleSize(float scale) => GetComponent<RectTransform>().localScale = new(scale, 0.125f);
     public void ChangeSpeed(float speed) => paddleSpeed = speed;
     public void DisableScript()
     {
-        if (!IsOwner && PongManager.gameType == GameType.VSOnline)
-        {
-            enabled = false;
+        if (IsOwner || PongManager.gameType != GameType.VSOnline)
             return;
-        }
+        enabled = false;
     }
     //bloody americans 
     public void SetColor(Color color) => GetComponent<SpriteRenderer>().color = color;

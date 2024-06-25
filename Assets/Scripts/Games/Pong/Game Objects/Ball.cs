@@ -46,7 +46,9 @@ public class Ball : NetworkBehaviour
             lastHitObjectTag = collision.gameObject.tag;
             return;
         }
-        if (collision.gameObject.tag=="Wall" && lastHitObjectTag == ("Wall"))
+        if (collision.gameObject.CompareTag("Paddle"))
+            sameTagBounceCount = 0;
+        if (collision.gameObject.CompareTag("Wall") && lastHitObjectTag == "Wall")
             sameTagBounceCount++;
         if (sameTagBounceCount > 5)
             Launch();

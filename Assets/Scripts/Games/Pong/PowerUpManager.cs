@@ -86,8 +86,8 @@ public class PowerUpManager : MonoBehaviour
             PowerUpObject p = g.GetComponent<PowerUpObject>();
             p.PongManager = PongManager;
             p.PowerUpManager = this;
-            p.isPlayer = panel == playerPowerBarsPanel;
-            if (!p.isPlayer && PongManager.gameType == GameType.VSCOM)
+            p.isPlayer = panel == playerPowersPanel;
+            if (!p.isPlayer && PongManager.gameType != GameType.VSLocal)
                 g.GetComponent<Button>().enabled = false;
             p.SetPowerUp(powerUps[x]);
             ownersCurrentlyActivePowersUps.Add(powerUps[x]);

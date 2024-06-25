@@ -69,8 +69,10 @@ public class PlayerPaddle : Paddle
         endPos = touchPosition;
         endTime = time;
         allowMovement = false;
-        if (IsOwner || PongManager.gameType != GameType.VSOnline)
+        if (PongManager.gameType != GameType.VSOnline)
             powerBar.PowerPercentChange(2 * (endTime - startTime), true);
+        else
+            PongManager.PowerBarChargeRpc(2 * (endTime - startTime), true, IsHost);
     }
 }
 
