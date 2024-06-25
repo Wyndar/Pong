@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Netcode;
 
 public class PowerUpObject: MonoBehaviour
 {
@@ -9,12 +8,23 @@ public class PowerUpObject: MonoBehaviour
     public bool isPlayer;
     public PowerUp powerUp;
     public Image powerUpImage;
+    public Image powerUpHighlight;
     public int powerBarCost;
+
+    public void SetHighlightOpacity(bool shouldShow)
+    {
+        if(shouldShow)
+        powerUpHighlight.color = Color.white;
+        else
+            powerUpHighlight.color = Color.clear;
+    }
+
     public void SetPowerUp(PowerUp powerUpToSet)
     {
         powerUp = powerUpToSet;
         name = powerUp.ToString();
         powerUpImage.sprite = Resources.Load($"Sprites/{powerUp}", typeof(Sprite)) as Sprite;
+        SetHighlightOpacity(false);
         switch (powerUp)
         {
             case PowerUp.slow:
