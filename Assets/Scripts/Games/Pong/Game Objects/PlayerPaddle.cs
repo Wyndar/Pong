@@ -1,5 +1,6 @@
 ﻿using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerPaddle : Paddle
 {
@@ -57,8 +58,8 @@ public class PlayerPaddle : Paddle
         else if (PongManager.gameInputType != InputType.Touchscreen)
         {
             rb.velocity = name == "Blue Player"
-                ? paddleSpeed * new Vector2(0, 0) { x = Input.acceleration.x > 0 ? 1f : -1f }
-                : paddleSpeed * new Vector2(0, 0) { x = Input.acceleration.x < 0 ? -1f : 1f };
+                ? paddleSpeed * new Vector2(0, 0) { x = Accelerometer.current.acceleration.ReadValue().x > 0 ? 1f : -1f }
+                : paddleSpeed * new Vector2(0, 0) { x = Accelerometer.current.acceleration.ReadValue().x < 0 ? -1f : 1f };
             time += Time.deltaTime;
             if (time >= 1)
             {

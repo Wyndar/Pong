@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Unity.Netcode;
 using System;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 public class PongManager : GameManager
 {
@@ -111,6 +112,7 @@ public class PongManager : GameManager
         string s = playerHealth > 0 ? "You win!" : "You lose.";
         gameOverText.text = $"{s} {Environment.NewLine} {Environment.NewLine} Touch the screen to play again.";
         Camera.main.transform.rotation = new(0, 0, 0, 0);
+        InputSystem.DisableDevice(Accelerometer.current);
     }
 
     public void LoadStartScreen()
@@ -263,6 +265,8 @@ public class PongManager : GameManager
         ResetObjects();
         PowerUpManager.ToggleUI(true);
         PowerUpManager.PowerUpSetup();
+        if (gameInputType != InputType.Touchscreen)
+            InputSystem.EnableDevice(Accelerometer.current);
         if (gameType != GameType.VSOnline)
             return;
         if (IsHost)
