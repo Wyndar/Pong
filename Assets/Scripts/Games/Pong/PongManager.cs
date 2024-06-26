@@ -11,8 +11,9 @@ public class PongManager : GameManager
     private const int startingHP = 8;
 
     [SerializeField] private TMP_Text playerHealthText, opponentHealthText, gameOverText, confirmationPanelText;
+    [SerializeField] private TMP_Dropdown gameInputTypeDropdown;
     [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, ballPrefab;
-    [SerializeField] private GameObject gameOverPanel, startScreenPanel, confirmationMessagePanel, leaveGameButton, scoreBoard;
+    [SerializeField] private GameObject gameOverPanel, startScreenPanel, settingsPanel, confirmationMessagePanel, leaveGameButton, scoreBoard;
     [SerializeField] private Color winColor, loseColor;
     [SerializeField] private Goal player1Goal, player2Goal;
    
@@ -239,6 +240,9 @@ public class PongManager : GameManager
         }
     }
 
+    public void ToggleSettingsPanel(bool shouldShow) => settingsPanel.SetActive(shouldShow);
+
+    public void SetGameInputType()=> gameInputType = Enum.Parse<InputType>(gameInputTypeDropdown.value.ToString());
     private void GameSetup()
     {
         startScreenPanel.SetActive(false);

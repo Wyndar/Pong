@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class GameManager : NetworkBehaviour
 {
     public GameObject NetworkManagerPrefab;
-
+    public InputType gameInputType;
     public GameObject loadingScreenPrefab;
     public GameObject canvas;
     public List<ulong> PlayerIDs = new();

@@ -13,6 +13,8 @@ public class PlayerPaddle : Paddle
         if (!IsOwner)
             return;
         SetPlayerPaddleRpc(NetworkManager.Singleton.LocalClientId);
+        if (PongManager.gameInputType == InputType.Gyro)
+            return;
         InputManager = FindObjectOfType<InputManager>();
         InputManager.OnStartTouch += TouchStart;
         InputManager.OnEndTouch += TouchEnd;
@@ -23,16 +25,15 @@ public class PlayerPaddle : Paddle
         base.Awake();
         if (PongManager.gameType == GameType.VSOnline)
             return;
+        if (PongManager.gameInputType == InputType.Gyro && PongManager.gameType != GameType.VSLocal)
+            return;
         InputManager = FindObjectOfType<InputManager>();
         InputManager.OnStartTouch += TouchStart;
         InputManager.OnEndTouch += TouchEnd;
     }
 
     [Rpc(SendTo.ClientsAndHost)]
-    public void SetPlayerPaddleRpc(ulong id)
-    {
-        clientID = (int)id;
-    }
+    public void SetPlayerPaddleRpc(ulong id) => clientID = (int)id;
 
     private void TouchStart(Vector2 position, float time, bool isFirstTouch)
     {
@@ -50,11 +51,26 @@ public class PlayerPaddle : Paddle
     {
         if (!hasGameStarted)
             rb.position = PongManager.offscreenPosition.position;
-        if (allowMovement)
+        if (allowMovement && PongManager.gameInputType != InputType.Gyro)
         {
             rb.velocity = name == "Blue Player"
                 ? paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? 1f : -1f }
                 : paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? -1f : 1f };
+        }
+        else if (PongManager.gameInputType != InputType.Touchscreen)
+        {
+            rb.velocity = name == "Blue Player"
+                ? paddleSpeed * new Vector2(0, 0) { x = Input.acceleration.x > 0 ? 1f : -1f }
+                : paddleSpeed * new Vector2(0, 0) { x = Input.acceleration.x < 0 ? -1f : 1f };
+            startTime += Time.deltaTime;
+            if (startTime >= 1)
+            {
+                if (PongManager.gameType != GameType.VSOnline)
+                    powerBar.PowerPercentChange(2, true);
+                else
+                    PongManager.PowerBarChargeRpc(2, true, IsHost);
+                startTime = 0;
+            }
         }
         else
             rb.velocity = Vector2.zero;

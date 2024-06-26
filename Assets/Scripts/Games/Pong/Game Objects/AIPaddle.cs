@@ -3,7 +3,7 @@ public class AIPaddle : Paddle
 {
     public float AIMoveThreshold;
     public Ball ball;
-    public float chargeAmount = 1f;
+    public float chargeAmount = 2f;
     private float time;
     new private void Awake()
     {

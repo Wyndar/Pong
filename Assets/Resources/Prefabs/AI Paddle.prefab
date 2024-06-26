@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 549188932981000852}
   - component: {fileID: 80543536820695926}
   - component: {fileID: 1275727899746369312}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: AI Paddle
   m_TagString: Paddle
   m_Icon: {fileID: 0}
@@ -201,7 +201,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PongManager: {fileID: 0}
   resetPosition: {x: 0, y: 0}
-  paddleSpeed: 5
   rb: {fileID: 0}
   startPos: {x: 0, y: 0}
   endPos: {x: 0, y: 0}
