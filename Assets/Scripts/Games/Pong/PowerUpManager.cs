@@ -15,8 +15,9 @@ public class PowerUpManager : MonoBehaviour
 
     public void SetLocalPlayerPowers(List<PowerUp> powerUps, bool isOwner)
     {
+        powerUps.Clear();
         if (ownersPowerUps.Count == 6 && isOwner)
-            powerUps = new(ownersPowerUps);
+            powerUps.AddRange(ownersPowerUps);
         else
             RandomPowerUpAdd(powerUps);
     }
@@ -90,7 +91,8 @@ public class PowerUpManager : MonoBehaviour
             if (!p.isPlayer && PongManager.gameType != GameType.VSLocal)
                 g.GetComponent<Button>().enabled = false;
             p.SetPowerUp(powerUps[x]);
-            ownersCurrentlyActivePowersUps.Add(powerUps[x]);
+            if (p.isPlayer)
+                ownersCurrentlyActivePowersUps.Add(powerUps[x]);
             powerUps.RemoveAt(x);
         }
     }

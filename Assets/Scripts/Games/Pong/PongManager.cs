@@ -263,6 +263,8 @@ public class PongManager : GameManager
         ResetObjects();
         PowerUpManager.ToggleUI(true);
         PowerUpManager.PowerUpSetup();
+        if (gameType != GameType.VSOnline)
+            return;
         if (IsHost)
         {
             PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player1PowerUps, true);
