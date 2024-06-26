@@ -6,6 +6,7 @@ public class PlayerPaddle : Paddle
     private InputManager InputManager;
     private bool isTouch1;
     public int clientID;
+    private float time;
     public override void OnNetworkSpawn()
     {
         PongManager = FindObjectOfType<PongManager>();
@@ -13,8 +14,6 @@ public class PlayerPaddle : Paddle
         if (!IsOwner)
             return;
         SetPlayerPaddleRpc(NetworkManager.Singleton.LocalClientId);
-        if (PongManager.gameInputType == InputType.Gyro)
-            return;
         InputManager = FindObjectOfType<InputManager>();
         InputManager.OnStartTouch += TouchStart;
         InputManager.OnEndTouch += TouchEnd;
@@ -24,8 +23,6 @@ public class PlayerPaddle : Paddle
     {
         base.Awake();
         if (PongManager.gameType == GameType.VSOnline)
-            return;
-        if (PongManager.gameInputType == InputType.Gyro && PongManager.gameType != GameType.VSLocal)
             return;
         InputManager = FindObjectOfType<InputManager>();
         InputManager.OnStartTouch += TouchStart;
@@ -62,14 +59,14 @@ public class PlayerPaddle : Paddle
             rb.velocity = name == "Blue Player"
                 ? paddleSpeed * new Vector2(0, 0) { x = Input.acceleration.x > 0 ? 1f : -1f }
                 : paddleSpeed * new Vector2(0, 0) { x = Input.acceleration.x < 0 ? -1f : 1f };
-            startTime += Time.deltaTime;
-            if (startTime >= 1)
+            time += Time.deltaTime;
+            if (time >= 1)
             {
                 if (PongManager.gameType != GameType.VSOnline)
                     powerBar.PowerPercentChange(2, true);
                 else
                     PongManager.PowerBarChargeRpc(2, true, IsHost);
-                startTime = 0;
+                time = 0;
             }
         }
         else
