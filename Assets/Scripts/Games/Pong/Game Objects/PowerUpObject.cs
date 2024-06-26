@@ -13,8 +13,8 @@ public class PowerUpObject: MonoBehaviour
 
     public void SetHighlightOpacity(bool shouldShow)
     {
-        if(shouldShow)
-        powerUpHighlight.color = Color.white;
+        if (shouldShow)
+            powerUpHighlight.color = Color.white;
         else
             powerUpHighlight.color = Color.clear;
     }

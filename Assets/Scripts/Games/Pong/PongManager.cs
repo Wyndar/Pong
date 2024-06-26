@@ -7,15 +7,15 @@ using System.Collections.Generic;
 
 public class PongManager : GameManager
 {
-    private const float damageChargeMultiplier = 10;
     private const float paddleStartSpeed = 5f;
     private const int startingHP = 8;
-    [SerializeField] private TMP_Text playerHealthText, opponentHealthText, gameOverText;
+
+    [SerializeField] private TMP_Text playerHealthText, opponentHealthText, gameOverText, confirmationPanelText;
     [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, ballPrefab;
-    [SerializeField] private GameObject gameOverPanel, startScreenPanel, scoreBoard;
+    [SerializeField] private GameObject gameOverPanel, startScreenPanel, confirmationMessagePanel, leaveGameButton, scoreBoard;
     [SerializeField] private Color winColor, loseColor;
     [SerializeField] private Goal player1Goal, player2Goal;
-
+   
     public RectTransform player1Position, player2Position, offscreenPosition;
     public Paddle player1Paddle = null, player2Paddle = null;
     public GameType gameType;
@@ -25,10 +25,10 @@ public class PongManager : GameManager
     public Ball GameBall { get; private set; }
     public PowerUpManager PowerUpManager;
 
+
     public override void StartGame() => StartOnlineGameRPC();
     public void StartGame(string game)
     {
-        FindObjectOfType<NetworkManager>().enabled = false;
         gameType = Enum.Parse<GameType>(game);
         GameBall = Instantiate(ballPrefab).GetComponent<Ball>();
         player1Paddle = Instantiate(playerPaddlePrefab).GetComponent<PlayerPaddle>();
@@ -220,7 +220,25 @@ public class PongManager : GameManager
         if (opponentHealth < 0)
             opponentHealth = 0;
     }
-   
+    
+    public void ExitGameCheck()
+    {
+        confirmationMessagePanel.SetActive(true);
+        confirmationPanelText.text = $"Are you sure you want to leave this game? {Environment.NewLine}" +
+            $" (Leaving this game will count as a loss.)";
+    }
+    public void ConfirmExit(bool shouldExit)
+    {
+        confirmationMessagePanel.SetActive(false);
+        if (shouldExit)
+        {
+            player1Paddle.gameObject.SetActive(false);
+            player2Paddle.gameObject.SetActive(false);
+            GameBall.gameObject.SetActive(false);
+            LoadScene(1);
+        }
+    }
+
     private void GameSetup()
     {
         startScreenPanel.SetActive(false);
@@ -236,6 +254,7 @@ public class PongManager : GameManager
         player1Paddle.name = "Blue Player";
         player2Paddle.name = "Red Player";
         scoreBoard.SetActive(true);
+        leaveGameButton.SetActive(true);
         SetScore();
         ResetObjects();
         PowerUpManager.ToggleUI(true);
