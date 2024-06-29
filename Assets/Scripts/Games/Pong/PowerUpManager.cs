@@ -65,7 +65,8 @@ public class PowerUpManager : MonoBehaviour
     {
         List<PowerUp> powers = new();
         foreach (PowerUpData powerUp in powerUpsList)
-            powers.Add(powerUp.PowerUpID);
+            if (!powerUp.IsLocked)
+                powers.Add(powerUp.PowerUpID);
         powerUps.Clear();
         while (powerUps.Count < 6)
         {
@@ -89,18 +90,18 @@ public class PowerUpManager : MonoBehaviour
         {
             if (powerUps.Count == 0)
                 break;
-            int x = UnityEngine.Random.Range(0, powerUps.Count);
-            GameObject g = Instantiate(powerUpPrefab, panel.transform);
-            PowerUpObject p = g.GetComponent<PowerUpObject>();
-            p.PongManager = PongManager;
-            p.PowerUpManager = this;
-            p.isPlayer = panel == playerPowersPanel;
-            if (!p.isPlayer && PongManager.gameType != GameType.VSLocal)
-                g.GetComponent<Button>().enabled = false;
-            p.SetPowerUp(powerUpsList.Find(x => x.PowerUpID == p.PowerUpID));
-            if (p.isPlayer)
-                ownersCurrentlyActivePowersUps.Add(powerUps[x]);
-            powerUps.RemoveAt(x);
+            int powerUpIndex = UnityEngine.Random.Range(0, powerUps.Count);
+            GameObject spawnedPowerUp = Instantiate(powerUpPrefab, panel.transform);
+            PowerUpObject powerUp = spawnedPowerUp.GetComponent<PowerUpObject>();
+            powerUp.PongManager = PongManager;
+            powerUp.PowerUpManager = this;
+            powerUp.isPlayer = panel == playerPowersPanel;
+            if (!powerUp.isPlayer && PongManager.gameType != GameType.VSLocal)
+                spawnedPowerUp.GetComponent<Button>().enabled = false;
+            powerUp.SetPowerUp(powerUpsList.Find(p => p.PowerUpID == powerUps[powerUpIndex]));
+            if (powerUp.isPlayer)
+                ownersCurrentlyActivePowersUps.Add(powerUps[powerUpIndex]);
+            powerUps.RemoveAt(powerUpIndex);
         }
     }
     public void PowerUpSelectionScreen()

@@ -25,8 +25,8 @@ public class PowerUpObject : MonoBehaviour
     public void SetPowerUp(PowerUpData powerUpToSet)
     {
         PowerUpID = powerUpToSet.PowerUpID;
-        PowerUpName= powerUpToSet.PowerUpName;
-        PowerBarCost= powerUpToSet.PowerBarCost;
+        PowerUpName = powerUpToSet.PowerUpName;
+        PowerBarCost = powerUpToSet.PowerBarCost;
         PowerUpInfo = powerUpToSet.PowerUpInfo;
         isLocked = powerUpToSet.IsLocked;
         name = PowerUpName;
