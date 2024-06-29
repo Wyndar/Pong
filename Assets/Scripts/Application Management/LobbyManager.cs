@@ -33,6 +33,8 @@ public class LobbyManager : MonoBehaviour
     public void StartGame() => GameManager.StartGame();
     public void LobbyUpdate()
     {
+        if (!lobbyClients.activeInHierarchy)
+            return;
         List<Transform> l = new();
         foreach (Transform transform in lobbyClients.transform)
             l.Add(transform);

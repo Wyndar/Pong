@@ -11,12 +11,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-unity:12.0.0' // Assets/Firebase/Editor/AuthDependencies.xml:20
     implementation 'com.google.firebase:firebase-common:21.0.0' // Assets/Firebase/Editor/AppDependencies.xml:13
 // Android Resolver Dependencies End
+    implementation 'com.android.support:multidex:2.0.1'
 **DEPS**}
 
 // Android Resolver Exclusions Start
 android {
   packagingOptions {
       exclude ('/lib/armeabi/*' + '*')
+      exclude ('/lib/armeabi-v7a/*' + '*')
       exclude ('/lib/mips/*' + '*')
       exclude ('/lib/mips64/*' + '*')
       exclude ('/lib/x86/*' + '*')
@@ -36,6 +38,7 @@ android {
     }
 
     defaultConfig {
+        multiDexEnabled true
         minSdkVersion **MINSDKVERSION**
         targetSdkVersion **TARGETSDKVERSION**
         ndk {

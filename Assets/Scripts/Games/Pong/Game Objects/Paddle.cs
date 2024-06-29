@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 
-public class Paddle : NetworkBehaviour
+public class Paddle : MonoBehaviour
 {
     public PongManager PongManager;
     public Vector2 resetPosition;
@@ -32,19 +32,10 @@ public class Paddle : NetworkBehaviour
     {
         if (!collision.gameObject.CompareTag("Ball"))
             return;
-        if (PongManager.gameType == GameType.VSOnline)
-            PongManager.PowerBarChargeRpc(5, true, IsHost);
-        else
-            powerBar.PowerPercentChange(5, true);
+        powerBar.PowerPercentChange(5, true);
     }
     public void ScaleSize(float scale) => GetComponent<RectTransform>().localScale = new(scale, 0.125f);
     public void ChangeSpeed(float speed) => paddleSpeed = speed;
-    public void DisableScript()
-    {
-        if (IsOwner || PongManager.gameType != GameType.VSOnline)
-            return;
-        enabled = false;
-    }
     //bloody americans 
     public void SetColor(Color color) => GetComponent<SpriteRenderer>().color = color;
 }

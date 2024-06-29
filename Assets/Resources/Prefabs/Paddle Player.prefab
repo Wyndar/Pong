@@ -10,12 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3344680290435240143}
   - component: {fileID: 1819697555808546349}
-  - component: {fileID: 6270198221064435912}
   - component: {fileID: 826592155209834032}
   - component: {fileID: 4404749203003149723}
-  - component: {fileID: 6894874001105981188}
-  - component: {fileID: 3306888542049362281}
-  - component: {fileID: 8886903886770680874}
   - component: {fileID: 2739114648561674656}
   m_Layer: 0
   m_Name: Paddle Player
@@ -95,27 +91,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6270198221064435912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4309536575918499972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 390793517
-  InScenePlacedSourceGlobalObjectIdHash: 390793517
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
 --- !u!61 &826592155209834032
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -188,145 +163,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 6
---- !u!114 &6894874001105981188
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4309536575918499972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6d306a0bd0533246bb9ed1258b654b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 0
-  SyncRotAngleX: 0
-  SyncRotAngleY: 0
-  SyncRotAngleZ: 0
-  SyncScaleX: 0
-  SyncScaleY: 0
-  SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
-  UseHalfFloatPrecision: 0
-  InLocalSpace: 0
-  Interpolate: 1
-  SlerpPosition: 0
---- !u!114 &3306888542049362281
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4309536575918499972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80d7c879794dfda4687da0e400131852, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8886903886770680874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4309536575918499972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: ad2b02489ce60a841a2063483ab27e91, type: 3}
-  m_NotificationBehavior: 2
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents:
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 05ce931b-3332-40ed-8d5b-be69924dcbde
-    m_ActionName: Player/Tap[/Device Simulator Touchscreen/primaryTouch/press]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: ea4ccae6-12ac-4a02-b13b-e5e29e8dd3a3
-    m_ActionName: Player/Tap2[/Device Simulator Touchscreen/touch2/press]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: f668aaeb-13ff-45f6-8854-c18d6d89708b
-    m_ActionName: Player/Position[/Device Simulator Touchscreen/primaryTouch/position]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: b2a89138-1b28-4b97-a712-93bf68db2176
-    m_ActionName: Player/Position2[/Device Simulator Touchscreen/touch1/position]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 7f23a615-b77e-4cdb-bdbd-53483823ac43
-    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: c3be7383-63d2-4c6b-b8b3-d74c6646af96
-    m_ActionName: UI/Submit[/Keyboard/enter]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: f6bfb232-1363-48cd-b09f-46850e1787e6
-    m_ActionName: UI/Cancel[/Keyboard/escape]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: e5aa5608-01c5-444e-8b6a-58348c65478e
-    m_ActionName: UI/Point[/Mouse/position,/Device Simulator Touchscreen/touch0/position,/Device
-      Simulator Touchscreen/touch1/position,/Device Simulator Touchscreen/touch2/position,/Device
-      Simulator Touchscreen/touch3/position,/Device Simulator Touchscreen/touch4/position,/Device
-      Simulator Touchscreen/touch5/position,/Device Simulator Touchscreen/touch6/position,/Device
-      Simulator Touchscreen/touch7/position,/Device Simulator Touchscreen/touch8/position,/Device
-      Simulator Touchscreen/touch9/position]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 1e92d0be-5e1e-4d2c-9aa7-82c9e7de332d
-    m_ActionName: UI/Click[/Mouse/leftButton,/Device Simulator Touchscreen/touch0/press,/Device
-      Simulator Touchscreen/touch1/press,/Device Simulator Touchscreen/touch2/press,/Device
-      Simulator Touchscreen/touch3/press,/Device Simulator Touchscreen/touch4/press,/Device
-      Simulator Touchscreen/touch5/press,/Device Simulator Touchscreen/touch6/press,/Device
-      Simulator Touchscreen/touch7/press,/Device Simulator Touchscreen/touch8/press,/Device
-      Simulator Touchscreen/touch9/press]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 7d08571b-202f-401c-ad6b-a59b036e0d4a
-    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 9b985aac-3a8a-4ac3-81a6-e18bd9ef3060
-    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 5f2b01f5-ddd5-4a10-a6dd-7fbf1fa9dfde
-    m_ActionName: UI/RightClick[/Mouse/rightButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 0ffdff83-45b2-4fd4-907c-8f9b7aa19268
-    m_ActionName: UI/TrackedDevicePosition
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 60fc291f-49a7-41d0-845c-ea9e3c9c5bc3
-    m_ActionName: UI/TrackedDeviceOrientation
-  m_NeverAutoSwitchControlSchemes: 1
-  m_DefaultControlScheme: Touch
-  m_DefaultActionMap: Player
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!114 &2739114648561674656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,4 +185,3 @@ MonoBehaviour:
   allowMovement: 0
   hasGameStarted: 0
   powerBar: {fileID: 0}
-  clientID: 0

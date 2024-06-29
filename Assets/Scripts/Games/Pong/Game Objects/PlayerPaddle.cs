@@ -6,32 +6,15 @@ public class PlayerPaddle : Paddle
 {
     private InputManager InputManager;
     private bool isTouch1;
-    public int clientID;
     private float time;
-    public override void OnNetworkSpawn()
-    {
-        PongManager = FindObjectOfType<PongManager>();
-        rb = GetComponent<Rigidbody2D>();
-        if (!IsOwner)
-            return;
-        SetPlayerPaddleRpc(NetworkManager.Singleton.LocalClientId);
-        InputManager = FindObjectOfType<InputManager>();
-        InputManager.OnStartTouch += TouchStart;
-        InputManager.OnEndTouch += TouchEnd;
-    }
 
     public new void Awake()
     {
         base.Awake();
-        if (PongManager.gameType == GameType.VSOnline)
-            return;
         InputManager = FindObjectOfType<InputManager>();
         InputManager.OnStartTouch += TouchStart;
         InputManager.OnEndTouch += TouchEnd;
     }
-
-    [Rpc(SendTo.ClientsAndHost)]
-    public void SetPlayerPaddleRpc(ulong id) => clientID = (int)id;
 
     private void TouchStart(Vector2 position, float time, bool isFirstTouch)
     {
@@ -63,10 +46,7 @@ public class PlayerPaddle : Paddle
             time += Time.deltaTime;
             if (time >= 1)
             {
-                if (PongManager.gameType != GameType.VSOnline)
-                    powerBar.PowerPercentChange(2, true);
-                else
-                    PongManager.PowerBarChargeRpc(2, true, IsHost);
+                powerBar.PowerPercentChange(2, true);
                 time = 0;
             }
         }
@@ -83,10 +63,7 @@ public class PlayerPaddle : Paddle
         endPos = touchPosition;
         endTime = time;
         allowMovement = false;
-        if (PongManager.gameType != GameType.VSOnline)
-            powerBar.PowerPercentChange(2 * (endTime - startTime), true);
-        else
-            PongManager.PowerBarChargeRpc(2 * (endTime - startTime), true, IsHost);
+        powerBar.PowerPercentChange(2 * (endTime - startTime), true);
     }
 }
 

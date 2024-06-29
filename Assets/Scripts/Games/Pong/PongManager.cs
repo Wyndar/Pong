@@ -13,13 +13,14 @@ public class PongManager : GameManager
 
     [SerializeField] private TMP_Text playerHealthText, opponentHealthText, gameOverText, confirmationPanelText;
     [SerializeField] private TMP_Dropdown gameInputTypeDropdown;
-    [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, ballPrefab;
+    [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, ballPrefab, networkBallPrefab, networkPaddlePrefab;
     [SerializeField] private GameObject gameOverPanel, startScreenPanel, settingsPanel, confirmationMessagePanel, leaveGameButton, scoreBoard;
     [SerializeField] private Color winColor, loseColor;
     [SerializeField] private Goal player1Goal, player2Goal;
    
     public RectTransform player1Position, player2Position, offscreenPosition;
     public Paddle player1Paddle = null, player2Paddle = null;
+    public NetworkPaddle hostPaddle, clientPaddle;
     public GameType gameType;
     private int playerHealth, opponentHealth;
     private bool hasSetOnlinePowers;
@@ -42,31 +43,31 @@ public class PongManager : GameManager
         PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player1PowerUps, true);
         PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player2PowerUps, false);
         player2Paddle = e.GetComponent<Paddle>();
-        GameSetup();
+        OfflineGameSetup();
     }
 
     [Rpc(SendTo.ClientsAndHost)]
     private void StartOnlineGameRPC()
     {
         gameType = GameType.VSOnline;
-        PlayerPaddle[] paddles = FindObjectsOfType<PlayerPaddle>();
-        foreach (PlayerPaddle paddle in paddles)
+        NetworkPaddle[] paddles = FindObjectsOfType<NetworkPaddle>();
+        foreach (NetworkPaddle paddle in paddles)
         {
             if (paddle.clientID == 0)
-                player1Paddle = paddle;
+                hostPaddle = paddle;
             if (paddle.clientID == 1)
-                player2Paddle = paddle;
+                clientPaddle = paddle;
         }
         if (IsHost)
         {
-            GameObject b = Instantiate(ballPrefab);
+            GameObject b = Instantiate(networkBallPrefab);
             NetworkObject instanceNetworkBall = b.GetComponent<NetworkObject>();
             instanceNetworkBall.Spawn(true);
         }
         else
             Camera.main.transform.rotation = new(0, 0, 180, 0);
         GameBall = FindObjectOfType<Ball>();
-        GameSetup();
+        OnlineGameSetup();
     }
 
     [Rpc(SendTo.NotMe)]
@@ -104,6 +105,10 @@ public class PongManager : GameManager
             Destroy(player1Paddle.gameObject);
         if (player2Paddle != null)
             Destroy(player2Paddle.gameObject);
+        if(clientPaddle!=null)
+            Destroy(clientPaddle.gameObject);
+        if(hostPaddle!=null)
+            Destroy(hostPaddle.gameObject);
         if (GameBall != null)
             Destroy(GameBall.gameObject);
         scoreBoard.SetActive(false);
@@ -112,7 +117,8 @@ public class PongManager : GameManager
         string s = playerHealth > 0 ? "You win!" : "You lose.";
         gameOverText.text = $"{s} {Environment.NewLine} {Environment.NewLine} Touch the screen to play again.";
         Camera.main.transform.rotation = new(0, 0, 0, 0);
-        InputSystem.DisableDevice(Accelerometer.current);
+        if (Accelerometer.current.enabled)
+            InputSystem.DisableDevice(Accelerometer.current);
     }
 
     public void LoadStartScreen()
@@ -204,10 +210,18 @@ public class PongManager : GameManager
     }
     private void ResetObjects()
     {
-        player1Paddle.ResetPosition();
-        player2Paddle.ResetPosition();
-        if (gameType == GameType.VSOnline && !IsHost)
-            return;
+        if (gameType != GameType.VSOnline)
+        {
+            player1Paddle.ResetPosition();
+            player2Paddle.ResetPosition();
+        }
+        else
+        {
+            clientPaddle.ResetPosition();
+            hostPaddle.ResetPosition();
+            if (!IsHost)
+                return;
+        }
         StartCoroutine(GameBall.ResetBall());
     }
 
@@ -235,8 +249,16 @@ public class PongManager : GameManager
         confirmationMessagePanel.SetActive(false);
         if (shouldExit)
         {
-            player1Paddle.gameObject.SetActive(false);
-            player2Paddle.gameObject.SetActive(false);
+            if (gameType != GameType.VSOnline)
+            {
+                player1Paddle.gameObject.SetActive(false);
+                player2Paddle.gameObject.SetActive(false);
+            }
+            else
+            {
+                clientPaddle.gameObject.SetActive(false);
+                hostPaddle.gameObject.SetActive(false);
+            }
             GameBall.gameObject.SetActive(false);
             LoadScene(1);
         }
@@ -245,30 +267,33 @@ public class PongManager : GameManager
     public void ToggleSettingsPanel(bool shouldShow) => settingsPanel.SetActive(shouldShow);
 
     public void SetGameInputType()=> gameInputType = Enum.Parse<InputType>(gameInputTypeDropdown.value.ToString());
-    private void GameSetup()
+    private void OfflineGameSetup()
     {
-        startScreenPanel.SetActive(false);
         player1Paddle.hasGameStarted = true;
         player2Paddle.hasGameStarted = true;
         player1Paddle.resetPosition = player1Position.position;
         player2Paddle.resetPosition = player2Position.position;
         player1Paddle.ChangeSpeed(paddleStartSpeed);
         player2Paddle.ChangeSpeed(paddleStartSpeed);
-        playerHealth = startingHP; opponentHealth = startingHP;
         player1Paddle.SetColor(Color.blue);
         player2Paddle.SetColor(Color.red);
         player1Paddle.name = "Blue Player";
         player2Paddle.name = "Red Player";
-        scoreBoard.SetActive(true);
-        leaveGameButton.SetActive(true);
-        SetScore();
-        ResetObjects();
-        PowerUpManager.ToggleUI(true);
-        PowerUpManager.PowerUpSetup();
-        if (gameInputType != InputType.Touchscreen)
-            InputSystem.EnableDevice(Accelerometer.current);
-        if (gameType != GameType.VSOnline)
-            return;
+        GeneralGameSetup();
+    }
+    private void OnlineGameSetup()
+    {
+        hostPaddle.hasGameStarted = true;
+        clientPaddle.hasGameStarted = true;
+        hostPaddle.resetPosition = player1Position.position;
+        clientPaddle.resetPosition = player2Position.position;
+        hostPaddle.ChangeSpeed(paddleStartSpeed);
+        clientPaddle.ChangeSpeed(paddleStartSpeed);
+        hostPaddle.SetColor(Color.blue);
+        clientPaddle.SetColor(Color.red);
+        hostPaddle.name = "Blue Player";
+        clientPaddle.name = "Red Player";
+        GeneralGameSetup();
         if (IsHost)
         {
             PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player1PowerUps, true);
@@ -280,8 +305,22 @@ public class PongManager : GameManager
             PowerUpManager.SetPowerUps(PowerUpManager.playerPowersPanel, PowerUpManager.player2PowerUps);
         }
         List<string> powers = PowerUpManager.SendOwnerStringData(PowerUpManager.ownersCurrentlyActivePowersUps);
-            foreach (string power in powers)
-                SendPowerUpDataRpc(power);
+        foreach (string power in powers)
+            SendPowerUpDataRpc(power);
+    }
+    private void GeneralGameSetup()
+    {
+        if (gameInputType != InputType.Touchscreen)
+            InputSystem.EnableDevice(Accelerometer.current);
+        startScreenPanel.SetActive(false);
+        playerHealth = startingHP;
+        opponentHealth = startingHP;
+        scoreBoard.SetActive(true);
+        leaveGameButton.SetActive(true);
+        SetScore();
+        ResetObjects();
+        PowerUpManager.ToggleUI(true);
+        PowerUpManager.PowerUpSetup();
     }
 }
 

@@ -32,6 +32,7 @@ public class Ball : NetworkBehaviour
     private void Launch()
     {
         sameTagBounceCount = 0;
+        lastHitObjectTag = "";
         int x = Random.Range(0, 2) == 0 ? -1 : 1,
             y = Random.Range(0, 2) == 0 ? -1 : 1;
         rb.velocity = new(speed * x, speed * y);
