@@ -1,16 +1,19 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PowerUpObject: MonoBehaviour
+[System.Serializable]
+public class PowerUpObject : MonoBehaviour
 {
     public PowerUpManager PowerUpManager;
     public PongManager PongManager;
     public bool isPlayer;
-    public PowerUp powerUp;
+    public PowerUp PowerUpID;
+    public string PowerUpName;
+    public int PowerBarCost;
+    public string PowerUpInfo;
+    public bool isLocked;
     public Image powerUpImage;
     public Image powerUpHighlight;
-    public int powerBarCost;
-    public string powerUpInfo="undefined till json data is setup";
     public void SetHighlightOpacity(bool shouldShow)
     {
         if (shouldShow)
@@ -19,51 +22,34 @@ public class PowerUpObject: MonoBehaviour
             powerUpHighlight.color = Color.clear;
     }
 
-    public void SetPowerUp(PowerUp powerUpToSet)
+    public void SetPowerUp(PowerUpData powerUpToSet)
     {
-        powerUp = powerUpToSet;
-        name = powerUp.ToString();
-        powerUpImage.sprite = Resources.Load($"Sprites/{powerUp}", typeof(Sprite)) as Sprite;
+        PowerUpID = powerUpToSet.PowerUpID;
+        PowerUpName= powerUpToSet.PowerUpName;
+        PowerBarCost= powerUpToSet.PowerBarCost;
+        PowerUpInfo = powerUpToSet.PowerUpInfo;
+        isLocked = powerUpToSet.IsLocked;
+        name = PowerUpName;
+        powerUpImage.sprite = Resources.Load($"Sprites/{PowerUpID}", typeof(Sprite)) as Sprite;
         SetHighlightOpacity(false);
-        switch (powerUp)
-        {
-            case PowerUp.slow:
-            case PowerUp.speed:
-            case PowerUp.fastBall:
-                powerBarCost = 30;
-                break;
-            case PowerUp.heal:
-            case PowerUp.grow:
-                powerBarCost = 50;
-                break;
-            case PowerUp.shrink:
-            case PowerUp.damage:
-            case PowerUp.magnet:
-                powerBarCost = 80;
-                break;
-            case PowerUp.stun:
-            case PowerUp.split:
-                powerBarCost = 100;
-                break;
-        }
     }
     public void ActivatePowerUp()
     {
         if (isPlayer)
         {
-            if (PowerUpManager.playerPowerBar.PowerPercent >= powerBarCost)
-                PowerUpManager.playerPowerBar.PowerPercentChange(powerBarCost, false);
+            if (PowerUpManager.playerPowerBar.PowerPercent >= PowerBarCost)
+                PowerUpManager.playerPowerBar.PowerPercentChange(PowerBarCost, false);
             else
                 return;
         }
         else
         {
-            if (PowerUpManager.opponentPowerBar.PowerPercent >= powerBarCost)
-                PowerUpManager.opponentPowerBar.PowerPercentChange(powerBarCost, false);
+            if (PowerUpManager.opponentPowerBar.PowerPercent >= PowerBarCost)
+                PowerUpManager.opponentPowerBar.PowerPercentChange(PowerBarCost, false);
             else
                 return;
         }
-        switch (powerUp)
+        switch (PowerUpID)
         {
             case PowerUp.slow:
                 SlowEnemyPaddle();

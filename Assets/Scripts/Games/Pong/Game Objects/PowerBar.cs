@@ -45,7 +45,7 @@ public class PowerBar : MonoBehaviour
             foreach (Transform powerUpTranform in powerUpManager.playerPowersPanel.transform)
             {
                 PowerUpObject powerUp = powerUpTranform.GetComponent<PowerUpObject>();
-                powerUp.SetHighlightOpacity(powerUp.powerBarCost <= PowerPercent);
+                powerUp.SetHighlightOpacity(powerUp.PowerBarCost <= PowerPercent);
             }
         }
         else
@@ -53,7 +53,7 @@ public class PowerBar : MonoBehaviour
             foreach (Transform powerUpTranform in powerUpManager.opponentPowersPanel.transform)
             {
                 PowerUpObject powerUp = powerUpTranform.GetComponent<PowerUpObject>();
-                powerUp.SetHighlightOpacity(powerUp.powerBarCost <= PowerPercent);
+                powerUp.SetHighlightOpacity(powerUp.PowerBarCost <= PowerPercent);
             }
         }
     }

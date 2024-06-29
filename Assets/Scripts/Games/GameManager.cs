@@ -8,9 +8,10 @@ public class GameManager : NetworkBehaviour
     public GameObject loadingScreenPrefab;
     public GameObject canvas;
     public List<ulong> PlayerIDs = new();
-    
+    public SaveManager SaveManager;
+
     //allowing for other games while preserving the singleton nature
-    public void Awake()
+    public virtual void Awake()
     {
         if (NetworkManager.Singleton == null)
         {
@@ -22,6 +23,7 @@ public class GameManager : NetworkBehaviour
             Destroy(NetworkManager.Singleton.gameObject);
             Instantiate(NetworkManagerPrefab);
         }
+        SaveManager = GetComponent<SaveManager>();
     }
     public void LoadScene(int sceneNum)
     {

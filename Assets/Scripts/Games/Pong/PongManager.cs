@@ -10,6 +10,7 @@ public class PongManager : GameManager
 {
     private const float paddleStartSpeed = 5f;
     private const int startingHP = 8;
+    private const string powerUpDataLocation = "/Scripts/Load Data/powerUpInfo.json";
 
     [SerializeField] private TMP_Text playerHealthText, opponentHealthText, gameOverText, confirmationPanelText;
     [SerializeField] private TMP_Dropdown gameInputTypeDropdown;
@@ -28,7 +29,11 @@ public class PongManager : GameManager
     public Ball GameBall { get; private set; }
     public PowerUpManager PowerUpManager;
 
-
+    public override void Awake()
+    {
+        base.Awake();
+        PowerUpManager.powerUpsList.AddRange(SaveManager.LoadPowerUps(powerUpDataLocation));
+    }
     public override void StartGame() => StartOnlineGameRPC();
     public void StartGame(string game)
     {

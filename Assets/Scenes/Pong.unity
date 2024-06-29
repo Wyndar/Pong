@@ -3612,12 +3612,14 @@ MonoBehaviour:
   player2PowerUps: 
   ownersPowerUps: 
   ownersCurrentlyActivePowersUps: 
+  powerUpsList: []
   playerPowerBar: {fileID: 828721811}
   opponentPowerBar: {fileID: 368535885}
   showIcon: {fileID: 21300000, guid: 920024154f41dc5428bc1f37a4a3f56d, type: 3}
   hideIcon: {fileID: 21300000, guid: b688697b2dfabc64fae0927fb2cc7811, type: 3}
   powerUpPrefab: {fileID: 3388588704410495052, guid: 605e9c974a879264b958f76263142501, type: 3}
   powerUpSelectionPrefab: {fileID: 7437897010119230769, guid: c803cbe2083c4b64fa74641b9a358caf, type: 3}
+  lockedPrefab: {fileID: 2439093018805813553, guid: 81689b63db4255844b9246ddd086dc9d, type: 3}
   powerUpSelectionScreen: {fileID: 1548999584}
   selectedPowersPanel: {fileID: 1792010555}
   powerDisplayPanel: {fileID: 928963572}
@@ -3628,6 +3630,7 @@ MonoBehaviour:
   headerCostText: {fileID: 1727274807}
   bodyText: {fileID: 1738297884}
   toggleShowHideImage: {fileID: 1151237718}
+  powerUpInfoImage: {fileID: 1093653854}
 --- !u!1 &1060290390
 GameObject:
   m_ObjectHideFlags: 0
@@ -6262,7 +6265,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -6525,7 +6528,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 14.999985}
-  m_SizeDelta: {x: 800, y: 250}
+  m_SizeDelta: {x: 700, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1738297884
 MonoBehaviour:
@@ -6574,14 +6577,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 8
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -7545,7 +7548,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 17
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -9811,6 +9814,7 @@ GameObject:
   - component: {fileID: 5601001092505180247}
   - component: {fileID: 2065158952372044531}
   - component: {fileID: 4499328639767002917}
+  - component: {fileID: 5601001092505180248}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -11290,6 +11294,7 @@ MonoBehaviour:
   loadingScreenPrefab: {fileID: 1969766543903633113, guid: d3f8e69800f196f4283dfda2996f6726, type: 3}
   canvas: {fileID: 1073939877822152607}
   PlayerIDs: 
+  SaveManager: {fileID: 0}
   playerHealthText: {fileID: 8915404376704554425}
   opponentHealthText: {fileID: 5496606750856977491}
   gameOverText: {fileID: 2740235452571924103}
@@ -11343,6 +11348,18 @@ MonoBehaviour:
   joinCodeText: {fileID: 3229802352990724144}
   joinCodeInput: {fileID: 8670312190004969821}
   GameManager: {fileID: 0}
+--- !u!114 &5601001092505180248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2736820675519919809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bbd957125fa63b4f9462b44621d6ff9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &5698486788181685224
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -1,0 +1,79 @@
+[
+    {
+        "PowerUpID": "slow",
+        "PowerUpName": "Slow Mo",
+        "PowerBarCost": 30,
+        "PowerUpInfo": "Halve your opponent's paddle speed until someone scores a hit.",
+        "IsLocked": false
+    },
+    {
+        "PowerUpID": "speed",
+        "PowerUpName": "Speed Up",
+        "PowerBarCost": 30,
+        "PowerUpInfo": "Double your paddle speed until someone scores a hit.",
+        "IsLocked": false
+    },
+    {
+        "PowerUpID": "fastBall",
+        "PowerUpName": "Fast Ball",
+        "PowerBarCost": 30,
+        "PowerUpInfo": "The ball will move at double speed until someone scores a hit, use this carefully.",
+        "IsLocked": false
+    },
+    {
+        "PowerUpID": "heal",
+        "PowerUpName": "Life Gain",
+        "PowerBarCost": 50,
+        "PowerUpInfo": "Your health is increased by 1.",
+        "IsLocked": false
+    },
+    {
+        "PowerUpID": "grow",
+        "PowerUpName": "Big paddle",
+        "PowerBarCost": 50,
+        "PowerUpInfo": "Your paddle size doubles until someone scores a hit.",
+        "IsLocked": false
+    },
+    {
+        "PowerUpID": "shrink",
+        "PowerUpName": "Shrink Ray",
+        "PowerBarCost": 80,
+        "PowerUpInfo": "Halve your opponent's paddle size till someone scores a hit.",
+        "IsLocked": false
+    },
+    {
+        "PowerUpID": "damage",
+        "PowerUpName": "Heavy Ball",
+        "PowerBarCost": 80,
+        "PowerUpInfo": "Increase the damage dealt by the ball by one for one hit. (This stacks with other damage effects including itself and is applied before multiplication).",
+        "IsLocked": false
+    },
+    {
+        "PowerUpID": "magnet",
+        "PowerUpName": "Magnetic Paddle",
+        "PowerBarCost": 80,
+        "PowerUpInfo": "The ball will stick to your paddle. Flick upwards to launch the ball. These effects are aplied until someone scores a hit.",
+        "IsLocked": true
+    },
+    {
+        "PowerUpID": "stun",
+        "PowerUpName": "Disable",
+        "PowerBarCost": 100,
+        "PowerUpInfo": "Your opponent's paddle is disabled for 5 seconds or until someone scores a hit.",
+        "IsLocked": true
+    },
+    {
+        "PowerUpID": "split",
+        "PowerUpName": "Multi-ball",
+        "PowerBarCost": 100,
+        "PowerUpInfo": "The ball will split into 3 until someone scores a hit with any of the balls.",
+        "IsLocked": true
+    },
+    {
+        "PowerUpID": "doubleDamage",
+        "PowerUpName": "Cannon Ball",
+        "PowerBarCost": 120,
+        "PowerUpInfo": "Double the damage dealt by the ball for one hit. (This stacks with other damage effects including itself and is applied after addition).",
+        "IsLocked": true
+    }
+]

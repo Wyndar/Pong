@@ -40,8 +40,8 @@ public class NetworkPaddle : NetworkBehaviour
     public void ScaleSize(float scale) => GetComponent<RectTransform>().localScale = new(scale, 0.125f);
     public void ChangeSpeed(float speed) => PaddleSpeed = speed;
     public void DisableScript() => enabled = IsOwner;
-    //bloody americans 
     public void SetColor(Color color) => GetComponent<SpriteRenderer>().color = color;
+    //bloody americans 
     public override void OnNetworkSpawn()
     {
         PongManager = FindObjectOfType<PongManager>();

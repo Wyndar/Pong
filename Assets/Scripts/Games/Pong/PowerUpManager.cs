@@ -9,15 +9,17 @@ public class PowerUpManager : MonoBehaviour
     public PongManager PongManager;
     public GameObject playerPowerBarsPanel, opponentPowerBarsPanel, playerPowersPanel, opponentPowersPanel;
     public List<PowerUp> player1PowerUps, player2PowerUps, ownersPowerUps, ownersCurrentlyActivePowersUps;
+    public List<PowerUpData> powerUpsList;
     public PowerBar playerPowerBar, opponentPowerBar;
+
     private bool hasLoadedPowerUps, shouldShowInfoPanel = true;
     private PowerUpObject focusPowerUp;
     [SerializeField] private Sprite showIcon, hideIcon;
-    [SerializeField] private GameObject powerUpPrefab, powerUpSelectionPrefab;
+    [SerializeField] private GameObject powerUpPrefab, powerUpSelectionPrefab, lockedPrefab;
     [SerializeField] private GameObject powerUpSelectionScreen, selectedPowersPanel, powerDisplayPanel, powerInfoPanel, powerInfoAddButton,
         powerInfoRemoveButton;
     [SerializeField] private TMP_Text headerPowerText, headerCostText, bodyText;
-    [SerializeField] private Image toggleShowHideImage;
+    [SerializeField] private Image toggleShowHideImage, powerUpInfoImage;
     public void SetLocalPlayerPowers(List<PowerUp> powerUps, bool isOwner)
     {
         powerUps.Clear();
@@ -62,8 +64,8 @@ public class PowerUpManager : MonoBehaviour
     public void RandomPowerUpAdd(List<PowerUp> powerUps)
     {
         List<PowerUp> powers = new();
-        foreach (PowerUp powerUp in Enum.GetValues(typeof(PowerUp)))
-            powers.Add(powerUp);
+        foreach (PowerUpData powerUp in powerUpsList)
+            powers.Add(powerUp.PowerUpID);
         powerUps.Clear();
         while (powerUps.Count < 6)
         {
@@ -95,7 +97,7 @@ public class PowerUpManager : MonoBehaviour
             p.isPlayer = panel == playerPowersPanel;
             if (!p.isPlayer && PongManager.gameType != GameType.VSLocal)
                 g.GetComponent<Button>().enabled = false;
-            p.SetPowerUp(powerUps[x]);
+            p.SetPowerUp(powerUpsList.Find(x => x.PowerUpID == p.PowerUpID));
             if (p.isPlayer)
                 ownersCurrentlyActivePowersUps.Add(powerUps[x]);
             powerUps.RemoveAt(x);
@@ -106,27 +108,33 @@ public class PowerUpManager : MonoBehaviour
         powerUpSelectionScreen.SetActive(true);
         if (hasLoadedPowerUps)
             return;
-        foreach (PowerUp powerUp in Enum.GetValues(typeof(PowerUp)))
+        foreach (PowerUpData powerUp in powerUpsList)
         {
             GameObject p = Instantiate(powerUpSelectionPrefab, powerDisplayPanel.transform);
             PowerUpObject power = p.GetComponent<PowerUpObject>();
             power.PongManager = PongManager;
             power.PowerUpManager = this;
             power.SetPowerUp(powerUp);
+            if (powerUp.IsLocked)
+                Instantiate(lockedPrefab, p.transform);
         }
         hasLoadedPowerUps = true;
     }
     public void PowerUpAddOrRemove(PowerUpObject powerUp)
     {
+        //add warning????
+        if (powerUp.isLocked)
+            return;
         focusPowerUp = powerUp;
         if (shouldShowInfoPanel)
         {
             powerInfoPanel.SetActive(true);
-            headerCostText.text = powerUp.powerBarCost.ToString();
-            headerPowerText.text = powerUp.powerUp.ToString();
-            bodyText.text = powerUp.powerUpInfo;
-            powerInfoAddButton.SetActive(!ownersPowerUps.Contains(powerUp.powerUp));
-            powerInfoRemoveButton.SetActive(ownersPowerUps.Contains(powerUp.powerUp));
+            headerCostText.text = powerUp.PowerBarCost.ToString();
+            headerPowerText.text = powerUp.PowerUpName.ToString();
+            bodyText.text = powerUp.PowerUpInfo;
+            powerInfoAddButton.SetActive(!ownersPowerUps.Contains(powerUp.PowerUpID));
+            powerInfoRemoveButton.SetActive(ownersPowerUps.Contains(powerUp.PowerUpID));
+            powerUpInfoImage.sprite = powerUp.powerUpImage.sprite;
         }
         else
             AddRemoveToggle();
@@ -136,15 +144,15 @@ public class PowerUpManager : MonoBehaviour
     {
         if (powerInfoPanel.activeInHierarchy)
             powerInfoPanel.SetActive(false);
-        if (ownersPowerUps.Contains(focusPowerUp.powerUp))
+        if (ownersPowerUps.Contains(focusPowerUp.PowerUpID))
         {
-            ownersPowerUps.Remove(focusPowerUp.powerUp);
+            ownersPowerUps.Remove(focusPowerUp.PowerUpID);
             focusPowerUp.transform.SetParent(powerDisplayPanel.transform);
             return;
         }
         if (ownersPowerUps.Count == 6)
             return;
-        ownersPowerUps.Add(focusPowerUp.powerUp);
+        ownersPowerUps.Add(focusPowerUp.PowerUpID);
         focusPowerUp.transform.SetParent(selectedPowersPanel.transform);
     }
 
