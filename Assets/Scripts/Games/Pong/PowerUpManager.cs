@@ -2,17 +2,22 @@ using System;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PowerUpManager : MonoBehaviour
 {
     public PongManager PongManager;
-    public GameObject powerUpPrefab, powerUpSelectionPrefab;
-    public GameObject playerPowerBarsPanel, opponentPowerBarsPanel, playerPowersPanel, opponentPowersPanel, powerUpSelectionScreen,
-        selectedPowersPanel, powerDisplayPanel;
+    public GameObject playerPowerBarsPanel, opponentPowerBarsPanel, playerPowersPanel, opponentPowersPanel;
     public List<PowerUp> player1PowerUps, player2PowerUps, ownersPowerUps, ownersCurrentlyActivePowersUps;
     public PowerBar playerPowerBar, opponentPowerBar;
-    private bool hasLoadedPowerUps;
-
+    private bool hasLoadedPowerUps, shouldShowInfoPanel = true;
+    private PowerUpObject focusPowerUp;
+    [SerializeField] private Sprite showIcon, hideIcon;
+    [SerializeField] private GameObject powerUpPrefab, powerUpSelectionPrefab;
+    [SerializeField] private GameObject powerUpSelectionScreen, selectedPowersPanel, powerDisplayPanel, powerInfoPanel, powerInfoAddButton,
+        powerInfoRemoveButton;
+    [SerializeField] private TMP_Text headerPowerText, headerCostText, bodyText;
+    [SerializeField] private Image toggleShowHideImage;
     public void SetLocalPlayerPowers(List<PowerUp> powerUps, bool isOwner)
     {
         powerUps.Clear();
@@ -113,22 +118,45 @@ public class PowerUpManager : MonoBehaviour
     }
     public void PowerUpAddOrRemove(PowerUpObject powerUp)
     {
-        if (ownersPowerUps.Contains(powerUp.powerUp))
+        focusPowerUp = powerUp;
+        if (shouldShowInfoPanel)
         {
-            ownersPowerUps.Remove(powerUp.powerUp);
-            powerUp.transform.SetParent(powerDisplayPanel.transform);
+            powerInfoPanel.SetActive(true);
+            headerCostText.text = powerUp.powerBarCost.ToString();
+            headerPowerText.text = powerUp.powerUp.ToString();
+            bodyText.text = powerUp.powerUpInfo;
+            powerInfoAddButton.SetActive(!ownersPowerUps.Contains(powerUp.powerUp));
+            powerInfoRemoveButton.SetActive(ownersPowerUps.Contains(powerUp.powerUp));
+        }
+        else
+            AddRemoveToggle();
+    }
+
+    public void AddRemoveToggle()
+    {
+        if (powerInfoPanel.activeInHierarchy)
+            powerInfoPanel.SetActive(false);
+        if (ownersPowerUps.Contains(focusPowerUp.powerUp))
+        {
+            ownersPowerUps.Remove(focusPowerUp.powerUp);
+            focusPowerUp.transform.SetParent(powerDisplayPanel.transform);
             return;
         }
         if (ownersPowerUps.Count == 6)
             return;
-        ownersPowerUps.Add(powerUp.powerUp);
-        powerUp.transform.SetParent(selectedPowersPanel.transform);
+        ownersPowerUps.Add(focusPowerUp.powerUp);
+        focusPowerUp.transform.SetParent(selectedPowersPanel.transform);
     }
 
     //add warning if less than 6
     public void DisablePowerUpSelectionScreen()
     {
         powerUpSelectionScreen.SetActive(false);
+    }
+    public void ToggleShowHide()
+    {
+        toggleShowHideImage.sprite = shouldShowInfoPanel ? showIcon : hideIcon;
+        shouldShowInfoPanel = !shouldShowInfoPanel;
     }
 
     public void PowerUpSetup()
@@ -137,10 +165,9 @@ public class PowerUpManager : MonoBehaviour
         opponentPowerBar.SetPowerPercent(0);
         PongManager.player1Paddle.powerBar = playerPowerBar;
         PongManager.player2Paddle.powerBar = opponentPowerBar;
-        if (PongManager.gameType != GameType.VSOnline)
-        {
-            SetPowerUps(playerPowersPanel, player1PowerUps);
-            SetPowerUps(opponentPowersPanel, player2PowerUps);
-        }
+        if (PongManager.gameType == GameType.VSOnline)
+            return;
+        SetPowerUps(playerPowersPanel, player1PowerUps);
+        SetPowerUps(opponentPowersPanel, player2PowerUps);
     }
 }

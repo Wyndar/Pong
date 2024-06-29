@@ -10,7 +10,7 @@ public class PowerUpObject: MonoBehaviour
     public Image powerUpImage;
     public Image powerUpHighlight;
     public int powerBarCost;
-
+    public string powerUpInfo="undefined till json data is setup";
     public void SetHighlightOpacity(bool shouldShow)
     {
         if (shouldShow)
