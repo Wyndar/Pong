@@ -185,6 +185,6 @@ MonoBehaviour:
   allowMovement: 0
   hasGameStarted: 0
   powerBar: {fileID: 0}
-  AIMoveThreshold: -2.5
+  AIMoveThresholdXAxis: 0
+  AIMoveThresholdYAxis: 1
   ball: {fileID: 0}
-  chargeAmount: 0.2
