@@ -9,7 +9,7 @@ public class Goal : MonoBehaviour
 
     private void Start()
     {
-        PongManager=FindObjectOfType<PongManager>();
+        PongManager=FindFirstObjectByType<PongManager>();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

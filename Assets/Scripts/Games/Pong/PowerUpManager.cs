@@ -172,10 +172,10 @@ public class PowerUpManager : MonoBehaviour
     {
         playerPowerBar.SetPowerPercent(0);
         opponentPowerBar.SetPowerPercent(0);
-        PongManager.player1Paddle.powerBar = playerPowerBar;
-        PongManager.player2Paddle.powerBar = opponentPowerBar;
         if (PongManager.gameType == GameType.VSOnline)
             return;
+        PongManager.player1Paddle.powerBar = playerPowerBar;
+        PongManager.player2Paddle.powerBar = opponentPowerBar;
         SetPowerUps(playerPowersPanel, player1PowerUps);
         SetPowerUps(opponentPowersPanel, player2PowerUps);
     }

@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 1211864856415248904}
   - component: {fileID: 5859630886081519384}
   - component: {fileID: 6684585891265936257}
-  - component: {fileID: 4813194851717862249}
-  - component: {fileID: 2630582141897892327}
+  - component: {fileID: -7456768471096253105}
+  - component: {fileID: 6871900846586031255}
   m_Layer: 0
   m_Name: Network Ball
   m_TagString: Ball
@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2002791323
+  GlobalObjectIdHash: 883933865
   InScenePlacedSourceGlobalObjectIdHash: 2304471641
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -191,7 +191,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &4813194851717862249
+--- !u!114 &-7456768471096253105
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -210,8 +210,8 @@ MonoBehaviour:
   SyncRotAngleX: 0
   SyncRotAngleY: 0
   SyncRotAngleZ: 0
-  SyncScaleX: 0
-  SyncScaleY: 0
+  SyncScaleX: 1
+  SyncScaleY: 1
   SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
@@ -222,7 +222,7 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &2630582141897892327
+--- !u!114 &6871900846586031255
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

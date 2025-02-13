@@ -5,16 +5,18 @@ using Unity.Netcode;
 using System;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using System.Collections;
+using Unity.VisualScripting;
 
 public class PongManager : GameManager
 {
     private const float paddleStartSpeed = 5f;
     private const int startingHP = 8;
-    private const string powerUpDataLocation = "/Scripts/Load Data/powerUpInfo.json";
+    private const string powerUpDataLocation = "Load Data/powerUpInfo";
 
     [SerializeField] private TMP_Text playerHealthText, opponentHealthText, gameOverText, confirmationPanelText;
     [SerializeField] private TMP_Dropdown gameInputTypeDropdown;
-    [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, ballPrefab, networkBallPrefab, networkPaddlePrefab;
+    [SerializeField] private GameObject playerPaddlePrefab, AIEnemyPaddlePrefab, ballPrefab, networkBallPrefab, networkPaddlePrefab, leftBorderPrefab, rightBorderPrefab;
     [SerializeField] private GameObject gameOverPanel, startScreenPanel, settingsPanel, confirmationMessagePanel, leaveGameButton, scoreBoard;
     [SerializeField] private Color winColor, loseColor;
     [SerializeField] private Goal player1Goal, player2Goal;
@@ -55,14 +57,8 @@ public class PongManager : GameManager
     private void StartOnlineGameRPC()
     {
         gameType = GameType.VSOnline;
-        NetworkPaddle[] paddles = FindObjectsOfType<NetworkPaddle>();
-        foreach (NetworkPaddle paddle in paddles)
-        {
-            if (paddle.clientID == 0)
-                hostPaddle = paddle;
-            if (paddle.clientID == 1)
-                clientPaddle = paddle;
-        }
+        foreach (NetworkPaddle paddle in FindObjectsByType<NetworkPaddle>(FindObjectsSortMode.None))
+            paddle.InitializePaddle();
         if (IsHost)
         {
             GameObject b = Instantiate(networkBallPrefab);
@@ -71,8 +67,8 @@ public class PongManager : GameManager
         }
         else
             Camera.main.transform.rotation = new(0, 0, 180, 0);
-        GameBall = FindObjectOfType<Ball>();
-        OnlineGameSetup();
+        GameBall = FindFirstObjectByType<Ball>();
+        StartCoroutine(WaitForPaddlesBeforeSetup());
     }
 
     [Rpc(SendTo.NotMe)]
@@ -286,10 +282,28 @@ public class PongManager : GameManager
         player2Paddle.name = "Red Player";
         GeneralGameSetup();
     }
+    private IEnumerator WaitForPaddlesBeforeSetup()
+    {
+        float timeout = 5f;
+        float elapsedTime = 0f;
+
+        while ((hostPaddle == null || clientPaddle == null) && elapsedTime < timeout)
+        {
+            yield return new WaitForSeconds(0.2f);
+            elapsedTime += 0.1f;
+        }
+
+        if (hostPaddle != null && clientPaddle != null)
+        {
+            Debug.Log("Paddles initialized! Proceeding with OnlineGameSetup...");
+            OnlineGameSetup();
+        }
+        else
+            Debug.Log("Paddles were not set in time! Multiplayer might be broken.");
+        yield break;
+    }
     private void OnlineGameSetup()
     {
-        hostPaddle.hasGameStarted = true;
-        clientPaddle.hasGameStarted = true;
         hostPaddle.resetPosition = player1Position.position;
         clientPaddle.resetPosition = player2Position.position;
         hostPaddle.ChangeSpeed(paddleStartSpeed);
@@ -302,16 +316,22 @@ public class PongManager : GameManager
         if (IsHost)
         {
             PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player1PowerUps, true);
+            hostPaddle.powerBar = PowerUpManager.playerPowerBar;
+            clientPaddle.powerBar = PowerUpManager.opponentPowerBar;
             PowerUpManager.SetPowerUps(PowerUpManager.playerPowersPanel, PowerUpManager.player1PowerUps);
         }
         else
         {
             PowerUpManager.SetLocalPlayerPowers(PowerUpManager.player2PowerUps, true);
+            clientPaddle.powerBar = PowerUpManager.playerPowerBar;
+            hostPaddle.powerBar = PowerUpManager.opponentPowerBar;
             PowerUpManager.SetPowerUps(PowerUpManager.playerPowersPanel, PowerUpManager.player2PowerUps);
         }
         List<string> powers = PowerUpManager.SendOwnerStringData(PowerUpManager.ownersCurrentlyActivePowersUps);
         foreach (string power in powers)
             SendPowerUpDataRpc(power);
+        hostPaddle.hasGameStarted = true;
+        clientPaddle.hasGameStarted = true;
     }
     private void GeneralGameSetup()
     {

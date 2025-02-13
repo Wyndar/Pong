@@ -17,12 +17,12 @@ public class Paddle : MonoBehaviour
 
     public void Awake()
     {
-        PongManager = FindObjectOfType<PongManager>();
+        PongManager = FindFirstObjectByType<PongManager>();
         rb = GetComponent<Rigidbody2D>();
     }
     public void ResetPosition()
     {
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.position = resetPosition;
         GetComponent<RectTransform>().localScale = new(1, 0.125f);
         paddleSpeed = 5;

@@ -27,8 +27,8 @@ public class SaveManager:MonoBehaviour
     //loads a list of powerups from the db
     public List<PowerUpData> LoadPowerUps(string path)
     {
-        string json = File.ReadAllText(Application.dataPath + path);
-        List<PowerUpData> data = JsonConvert.DeserializeObject<List<PowerUpData>>(json, new JsonSerializerSettings()
+        var json = Resources.Load<TextAsset>(path);
+        List<PowerUpData> data = JsonConvert.DeserializeObject<List<PowerUpData>>(json.text, new JsonSerializerSettings()
         {
             ContractResolver = new PrivateResolver(),
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor

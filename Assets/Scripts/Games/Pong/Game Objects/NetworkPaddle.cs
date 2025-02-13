@@ -1,20 +1,16 @@
-﻿using Unity.Netcode;
+﻿
+using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class NetworkPaddle : NetworkBehaviour
 {
     private InputManager InputManager;
-    private bool isTouch1;
     public int clientID;
-    private float time;
 
     public PongManager PongManager;
     public Vector2 resetPosition;
     public float PaddleSpeed { get; private set; }
     public Rigidbody2D rb;
-    public Vector2 startPos;
-    public Vector2 endPos;
     public float startTime;
     public float endTime;
     public bool allowMovement;
@@ -22,7 +18,7 @@ public class NetworkPaddle : NetworkBehaviour
     public PowerBar powerBar;
     public void ResetPosition()
     {
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
         rb.position = resetPosition;
         GetComponent<RectTransform>().localScale = new(1, 0.125f);
         PaddleSpeed = 5;
@@ -42,63 +38,59 @@ public class NetworkPaddle : NetworkBehaviour
     public void DisableScript() => enabled = IsOwner;
     public void SetColor(Color color) => GetComponent<SpriteRenderer>().color = color;
     //bloody americans 
-    public override void OnNetworkSpawn()
+    public void InitializePaddle()
     {
-        PongManager = FindObjectOfType<PongManager>();
+        PongManager = FindFirstObjectByType<PongManager>();
         rb = GetComponent<Rigidbody2D>();
         if (!IsOwner)
             return;
         SetPlayerPaddleRpc(NetworkManager.Singleton.LocalClientId);
-        InputManager = FindObjectOfType<InputManager>();
+        InputManager = FindFirstObjectByType<InputManager>();
         InputManager.OnStartTouch += TouchStart;
         InputManager.OnEndTouch += TouchEnd;
     }
-
-    [Rpc(SendTo.ClientsAndHost)]
-    public void SetPlayerPaddleRpc(ulong id) => clientID = (int)id;
-
     private void TouchStart(Vector2 position, float time, bool isFirstTouch)
     {
         if (!hasGameStarted)
             return;
-        startPos = position;
         startTime = time;
         allowMovement = true;
-    }
-
-    private void Update()
-    {
-        if (!hasGameStarted)
-            rb.position = PongManager.offscreenPosition.position;
-        if (allowMovement && PongManager.gameInputType != InputType.Gyro)
-        {
-            rb.velocity = name == "Blue Player"
-                ? PaddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? 1f : -1f }
-                : PaddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? -1f : 1f };
-        }
-        else if (PongManager.gameInputType != InputType.Touchscreen)
-        {
-            rb.velocity = name == "Blue Player"
-                ? PaddleSpeed * new Vector2(0, 0) { x = Accelerometer.current.acceleration.ReadValue().x > 0 ? 1f : -1f }
-                : PaddleSpeed * new Vector2(0, 0) { x = Accelerometer.current.acceleration.ReadValue().x < 0 ? -1f : 1f };
-            time += Time.deltaTime;
-            if (time >= 1)
-            {
-                PongManager.PowerBarChargeRpc(2, true, IsHost);
-                time = 0;
-            }
-        }
-        else
-            rb.velocity = Vector2.zero;
     }
     private void TouchEnd(Vector2 touchPosition, float time, bool isFirstTouch)
     {
         if (!hasGameStarted)
             return;
-        endPos = touchPosition;
-        endTime = time;
         allowMovement = false;
-        PongManager.PowerBarChargeRpc(2 * (endTime - startTime), true, IsHost);
+        endTime = time;
+        powerBar.PowerPercentChange(2 * (endTime - startTime), true);
+    }
+
+    [Rpc(SendTo.ClientsAndHost)]
+    public void SetPlayerPaddleRpc(ulong id)
+    {
+        clientID = (int)id;
+        if (clientID == 1)
+            PongManager.clientPaddle = this;
+        else
+            PongManager.hostPaddle = this;
+    }
+    private void FixedUpdate()
+    {
+        if (!hasGameStarted || !IsOwner) return;
+        int moveInput = GetTouchDirection();
+        if(!IsHost) moveInput *= -1;
+        ApplyMovement(moveInput);
+    }
+
+    private int GetTouchDirection()
+    {
+        Vector2 touchPosition = allowMovement ? InputManager.CurrentFingerPosition : Vector2.zero;
+        float screenCenterX = Screen.width / 2;
+        return touchPosition.x == 0 ? 0 : touchPosition.x < screenCenterX ? -1 : 1;
+    }
+    private void ApplyMovement(int input)
+    {
+        Vector2 newPosition = rb.position + new Vector2(input * PaddleSpeed * Time.deltaTime, 0);
+        rb.MovePosition(newPosition);
     }
 }
-

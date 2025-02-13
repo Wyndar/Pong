@@ -24,6 +24,7 @@ public class LobbyManager : MonoBehaviour
     {
         lobbyHeaderText.text = GameManager.IsHost ? "Hosting" : "Joining";
         lobbyStartButton.SetActive(GameManager.IsHost);
+        lobbyStartButton.GetComponent<Button>().interactable = lobbyClients.transform.childCount > 1;
         lobbyPanel.SetActive(shouldShow);
         if (!shouldShow)
             DisconnectRelay();
@@ -47,6 +48,7 @@ public class LobbyManager : MonoBehaviour
             string v = PlayerID == 0 ? "Host" : "Client";
             p.GetComponentInChildren<TMP_Text>().text = $"Player {PlayerID} ({v})";
         }
+        lobbyStartButton.GetComponent<Button>().interactable = lobbyClients.transform.childCount > 1;
     }
 
     public async void StartRelay()

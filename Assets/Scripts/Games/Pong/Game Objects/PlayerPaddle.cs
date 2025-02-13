@@ -5,13 +5,12 @@ using UnityEngine.InputSystem;
 public class PlayerPaddle : Paddle
 {
     private InputManager InputManager;
-    private bool isTouch1;
     private float time;
 
     public new void Awake()
     {
         base.Awake();
-        InputManager = FindObjectOfType<InputManager>();
+        InputManager = FindFirstObjectByType<InputManager>();
         InputManager.OnStartTouch += TouchStart;
         InputManager.OnEndTouch += TouchEnd;
     }
@@ -34,13 +33,13 @@ public class PlayerPaddle : Paddle
             rb.position = PongManager.offscreenPosition.position;
         if (allowMovement && PongManager.gameInputType != InputType.Gyro)
         {
-            rb.velocity = name == "Blue Player"
+            rb.linearVelocity = name == "Blue Player"
                 ? paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? 1f : -1f }
                 : paddleSpeed * new Vector2(0, 0) { x = startPos.x > Screen.width / 2 ? -1f : 1f };
         }
         else if (PongManager.gameInputType != InputType.Touchscreen)
         {
-            rb.velocity = name == "Blue Player"
+            rb.linearVelocity = name == "Blue Player"
                 ? paddleSpeed * new Vector2(0, 0) { x = Accelerometer.current.acceleration.ReadValue().x > 0 ? 1f : -1f }
                 : paddleSpeed * new Vector2(0, 0) { x = Accelerometer.current.acceleration.ReadValue().x < 0 ? -1f : 1f };
             time += Time.deltaTime;
@@ -51,7 +50,7 @@ public class PlayerPaddle : Paddle
             }
         }
         else
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
     }
     private void TouchEnd(Vector2 touchPosition, float time, bool isFirstTouch)
     {
